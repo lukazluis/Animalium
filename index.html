@@ -1,33 +1,65 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Animalium - Clínica Veterinaria 🐾</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background-color: #f9f9f9;
-    }
-    .text-animalium-green {
-      color: #5F7C7D;
-    }
-    .bg-animalium-green {
-      background-color: #5F7C7D;
-    }
+    .text-animalium-green { color: #5F7C7D; }
+    .bg-animalium-green { background-color: #5F7C7D; }
   </style>
 </head>
-<body class="flex flex-col items-center justify-start min-h-screen py-6 px-4">
-  <header class="w-full text-center mb-6">
-    <img src="logo-animalium.png" alt="Animalium Logo" class="mx-auto h-28 mb-2" />
-    <h1 class="text-3xl font-bold text-animalium-green">Animalium</h1>
-    <p class="text-sm text-gray-600">Clínica Veterinaria para pequeñas especies</p>
-  </header>
-  <main class="text-center">
-    <h2 class="text-xl font-semibold mb-2">¡Bienvenido a Animalium!</h2>
-    <p class="mb-4">Tu sitio web está funcionando correctamente con Firebase. 🐾</p>
-    <button class="px-6 py-2 bg-animalium-green text-white rounded-full">Agendar Cita</button>
-  </main>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <div id="app-root" class="min-h-screen flex items-center justify-center p-6">
+    <p class="text-xl text-animalium-green">Cargando aplicación...</p>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
+      authDomain: "animalium-22e17.firebaseapp.com",
+      projectId: "animalium-22e17",
+      storageBucket: "animalium-22e17.appspot.com",
+      messagingSenderId: "800956760641",
+      appId: "1:800956760641:web:dab9057b718e240ec8bcc0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged((user) => {
+      renderPage(user);
+    });
+
+    function renderPage(user) {
+      const root = document.getElementById("app-root");
+      root.innerHTML = `
+        <div class="text-center">
+          <img src="logo-animalium.jpg" class="mx-auto h-24 mb-4" alt="Logo Animalium"/>
+          <h1 class="text-2xl font-bold text-animalium-green mb-2">Bienvenido a Animalium</h1>
+          ${user ? `<p class="mb-4">Usuario: ${user.email}</p>` : `
+            <p class="mb-4">Por favor inicia sesión para continuar.</p>
+            <input type="email" id="email" placeholder="Correo" class="px-4 py-2 border rounded mb-2 w-full max-w-sm"/><br/>
+            <input type="password" id="password" placeholder="Contraseña" class="px-4 py-2 border rounded mb-4 w-full max-w-sm"/><br/>
+            <button onclick="login()" class="px-4 py-2 bg-animalium-green text-white rounded">Entrar</button>
+          `}
+        </div>
+      `;
+    }
+
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+      } catch (error) {
+        alert("Error al iniciar sesión: " + error.message);
+      }
+    }
+  </script>
 </body>
 </html>
