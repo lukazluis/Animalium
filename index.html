@@ -1,47 +1,55 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Animalium - Clínica Veterinaria</title>
-    <meta name="description" content="Clínica veterinaria especializada en pequeñas especies. Cuidado integral para tus mascotas.">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f8f8;
-            color: #333;
-        }
-        .text-animalium-green { color: #5F7C7D; }
-        .bg-animalium-green { background-color: #5F7C7D; }
-        .bg-animalium-brown { background-color: #CDB79F; }
-        .border-animalium-green { border-color: #5F7C7D; }
-        .btn-primary {
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            color: white;
-            background-color: #5F7C7D;
-            transition: background-color 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .btn-primary:hover { background-color: #51696a; }
-        .section-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #5F7C7D;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animalium - Clínica Veterinaria 🐾</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
+      authDomain: "animalium-22e17.firebaseapp.com",
+      projectId: "animalium-22e17",
+      storageBucket: "animalium-22e17.appspot.com",
+      messagingSenderId: "800956760641",
+      appId: "1:800956760641:web:dab9057b718e240ec8bcc0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        await signInAnonymously(auth);
+      }
+      renderPage();
+    });
+
+    function renderPage() {
+      const root = document.getElementById('app-root');
+      root.innerHTML = `
+        <header class="bg-white shadow p-4">
+          <h1 class="text-2xl font-bold text-center text-green-700">Animalium</h1>
+          <p class="text-center text-sm text-gray-500">Clínica Veterinaria para pequeñas especies</p>
+        </header>
+        <main class="p-6 text-center">
+          <h2 class="text-xl font-semibold mb-2">¡Bienvenido a Animalium!</h2>
+          <p class="mb-4">Tu sitio ya está en línea y cargando correctamente. 🐾</p>
+        </main>
+        <footer class="bg-gray-200 text-center p-4 mt-6 text-sm text-gray-600">
+          © 2025 Animalium. Todos los derechos reservados.
+        </footer>
+      `;
+    }
+  </script>
 </head>
-<body class="antialiased">
-    <!-- Aquí iría todo el cuerpo HTML como en tu código original -->
-    <h1 class="section-title">Animalium - Clínica Veterinaria</h1>
-    <p class="text-center text-lg text-gray-700">Bienvenido a nuestra página. Estamos trabajando para cuidar a tus pequeñas especies.</p>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <div id="app-root" class="min-h-screen flex items-center justify-center">
+    <p class="text-xl text-animalium-green">Cargando aplicación...</p>
+  </div>
 </body>
 </html>
