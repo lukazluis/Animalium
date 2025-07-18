@@ -24,10 +24,55 @@
     <h1 class="text-3xl font-bold text-animalium-green">Animalium</h1>
     <p class="text-sm text-gray-600">Clínica Veterinaria para pequeñas especies</p>
   </header>
-  <main class="text-center">
+
+  <!-- Main welcome content -->
+  <main id="welcome-section" class="text-center">
     <h2 class="text-xl font-semibold mb-2">¡Bienvenido a Animalium!</h2>
     <p class="mb-4">Tu sitio web está funcionando correctamente con Firebase. 🐾</p>
-    <button class="px-6 py-2 bg-animalium-green text-white rounded-full">Agendar Cita</button>
+    <div class="space-x-4">
+      <button id="btnRegister" class="px-6 py-2 bg-animalium-green text-white rounded-full">Registrarse</button>
+      <button id="btnLogin" class="px-6 py-2 border border-animalium-green text-animalium-green rounded-full">Entrar</button>
+    </div>
   </main>
+
+  <!-- Registration survey form -->
+  <section id="register-section" class="w-full max-w-md bg-white p-6 rounded-lg shadow-lg hidden">
+    <h2 class="text-2xl font-semibold text-animalium-green mb-4 text-center">Registro</h2>
+    <form id="register-form" class="space-y-4">
+      <div><input type="text" name="firstName" placeholder="Nombre" required class="w-full border px-3 py-2 rounded" /></div>
+      <div><input type="text" name="lastName" placeholder="Apellido" required class="w-full border px-3 py-2 rounded" /></div>
+      <div><input type="text" name="address" placeholder="Dirección" required class="w-full border px-3 py-2 rounded" /></div>
+      <div><input type="tel" name="phone" placeholder="Teléfono" required class="w-full border px-3 py-2 rounded" /></div>
+      <div><input type="email" name="email" placeholder="Correo electrónico" required class="w-full border px-3 py-2 rounded" /></div>
+      <div><input type="password" name="password" placeholder="Contraseña" required class="w-full border px-3 py-2 rounded" /></div>
+      <div class="flex justify-between">
+        <button type="button" id="cancelRegister" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
+        <button type="submit" class="px-4 py-2 bg-animalium-green text-white rounded">Enviar</button>
+      </div>
+    </form>
+  </section>
+
+  <script>
+    const welcome = document.getElementById('welcome-section');
+    const registerSection = document.getElementById('register-section');
+    document.getElementById('btnRegister').addEventListener('click', () => {
+      welcome.classList.add('hidden');
+      registerSection.classList.remove('hidden');
+    });
+    document.getElementById('cancelRegister').addEventListener('click', () => {
+      registerSection.classList.add('hidden');
+      welcome.classList.remove('hidden');
+    });
+    // Placeholder: Handle registration submission
+    document.getElementById('register-form').addEventListener('submit', e => {
+      e.preventDefault();
+      alert('Formulario de registro enviado');
+      // Aquí podrías integrar la lógica de Firebase para crear el usuario...
+    });
+    document.getElementById('btnLogin').addEventListener('click', () => {
+      alert('Mostrar formulario de inicio de sesión');
+      // Aquí mostrarías tu modal o sección de login...
+    });
+  </script>
 </body>
 </html>
