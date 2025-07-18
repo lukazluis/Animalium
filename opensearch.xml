@@ -4,5 +4,5 @@
   <Description>Buscar en Animalium</Description>
   <InputEncoding>UTF-8</InputEncoding>
   <Image height="16" width="16" type="image/png">https://animalium.mx/logo-animalium.png</Image>
-  <Url type="text/html" method="get" template="https://animalium.mx/?s={searchTerms}"/>
+  <Url type="text/html" template="https://animalium.mx/?s={searchTerms}" method="get"/>
 </OpenSearchDescription>
