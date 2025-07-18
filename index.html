@@ -32,7 +32,7 @@
     function renderLogin() {
       document.getElementById("app-root").innerHTML = `
         <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
-          <img src="https://raw.githubusercontent.com/lukazluis/main/logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <img src="logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
           <h1 class="text-3xl font-bold text-animalium-green mb-6">Animalium - Iniciar Sesión</h1>
           <input id="email" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs" />
           <input id="password" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs" />
@@ -46,7 +46,7 @@
     function renderRegister() {
       document.getElementById("app-root").innerHTML = `
         <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
-          <img src="https://raw.githubusercontent.com/lukazluis/main/logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <img src="logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
           <h1 class="text-3xl font-bold text-animalium-green mb-6">Registro Animalium</h1>
           <input id="name" type="text" placeholder="Nombre" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
           <input id="surname" type="text" placeholder="Apellido" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
@@ -78,9 +78,7 @@
       const password = document.getElementById('passwordReg').value;
       try {
         const result = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(result.user.uid).set({
-          name, surname, phone, address, email
-        });
+        await db.collection('users').doc(result.user.uid).set({ name, surname, phone, address, email });
       } catch (err) {
         alert('Error al registrarse: ' + err.message);
       }
@@ -92,9 +90,63 @@
           <h1 class="text-3xl font-bold text-animalium-green">Bienvenido, ${user.email}</h1>
           <button onclick="logout()" class="mt-2 px-4 py-2 bg-red-500 text-white rounded">Cerrar sesión</button>
         </header>
-        <main class="p-6 text-center">
-          <h2 class="text-xl font-semibold mb-6">Aquí irá tu panel de citas 🐾</h2>
+        <main class="p-6 w-full max-w-lg mx-auto">
+          <h2 class="text-xl font-semibold mb-6">Agendar Cita 🗓️</h2>
+          <div class="flex flex-col gap-3 mb-6">
+            <input type="date" id="appointmentDate" class="px-4 py-2 border rounded w-full"/>
+            <select id="appointmentTime" class="px-4 py-2 border rounded w-full"></select>
+            <button onclick="bookAppointment()" class="px-4 py-2 bg-animalium-green text-white rounded">Reservar</button>
+          </div>
+          <h3 class="text-lg font-semibold mb-3">Mis Citas</h3>
+          <ul id="appointmentList" class="list-disc pl-5 mb-6"></ul>
         </main>`;
+      setupAppointmentUI(user.uid);
+    }
+
+    function setupAppointmentUI(uid) {
+      const dateInput = document.getElementById('appointmentDate');
+      const timeSelect = document.getElementById('appointmentTime');
+
+      dateInput.addEventListener('change', () => populateTimeSlots(dateInput.value));
+      dateInput.value = new Date().toISOString().split('T')[0];
+      populateTimeSlots(dateInput.value);
+
+      db.collection('appointments').where('userId', '==', uid)
+        .onSnapshot(snapshot => {
+          const ul = document.getElementById('appointmentList');
+          ul.innerHTML = '';
+          snapshot.docs.forEach(doc => {
+            const data = doc.data();
+            const li = document.createElement('li');
+            li.textContent = data.date + ' ' + data.time;
+            ul.appendChild(li);
+          });
+        });
+    }
+
+    function populateTimeSlots(date) {
+      const timeSelect = document.getElementById('appointmentTime');
+      timeSelect.innerHTML = '';
+      if (!date) return;
+      const d = new Date(date);
+      const day = d.getDay();
+      let slots = [];
+      if (day >= 1 && day <= 5) {
+        for (let h = 9; h < 19; h++) slots.push(`${h}:00 - ${h+1}:00`);
+      } else if (day === 6) {
+        for (let h = 10; h < 14; h++) slots.push(`${h}:00 - ${h+1}:00`);
+      }
+      slots.forEach(slot => {
+        const opt = document.createElement('option');
+        opt.value = slot; opt.textContent = slot;
+        timeSelect.appendChild(opt);
+      });
+    }
+
+    function bookAppointment() {
+      const date = document.getElementById('appointmentDate').value;
+      const time = document.getElementById('appointmentTime').value;
+      db.collection('appointments').add({ userId: auth.currentUser.uid, date, time });
     }
 
     function logout() {
@@ -105,7 +157,7 @@
     .text-animalium-green { color: #5F7C7D; }
     .bg-animalium-green { background-color: #5F7C7D; }
     .bg-animalium-brown { background-color: #CDB79F; }
-    body { font-family: system-ui, sans-serif; }
+    body { font-family: system-ui, sans-serif; margin: 0; }
   </style>
 </head>
 <body>
