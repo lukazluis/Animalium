@@ -6,10 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Animalium - Clínica Veterinaria 🐾</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <style>
+    .text-animalium-green { color: #5F7C7D; }
+    .bg-animalium-green { background-color: #5F7C7D; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <div id="app-root" class="min-h-screen flex items-center justify-center p-6">
+    <p class="text-xl text-animalium-green">Cargando aplicación...</p>
+  </div>
 
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
       authDomain: "animalium-22e17.firebaseapp.com",
@@ -19,37 +28,38 @@
       appId: "1:800956760641:web:dab9057b718e240ec8bcc0"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        await signInAnonymously(auth);
-      }
-      renderPage();
+    auth.onAuthStateChanged((user) => {
+      renderPage(user);
     });
 
-    function renderPage() {
-      const root = document.getElementById('app-root');
+    function renderPage(user) {
+      const root = document.getElementById("app-root");
       root.innerHTML = `
-        <header class="bg-white shadow p-4">
-          <h1 class="text-2xl font-bold text-center text-green-700">Animalium</h1>
-          <p class="text-center text-sm text-gray-500">Clínica Veterinaria para pequeñas especies</p>
-        </header>
-        <main class="p-6 text-center">
-          <h2 class="text-xl font-semibold mb-2">¡Bienvenido a Animalium!</h2>
-          <p class="mb-4">Tu sitio ya está en línea y cargando correctamente. 🐾</p>
-        </main>
-        <footer class="bg-gray-200 text-center p-4 mt-6 text-sm text-gray-600">
-          © 2025 Animalium. Todos los derechos reservados.
-        </footer>
+        <div class="text-center">
+          <img src="logo-animalium.jpg" class="mx-auto h-24 mb-4" alt="Logo Animalium"/>
+          <h1 class="text-2xl font-bold text-animalium-green mb-2">Bienvenido a Animalium</h1>
+          ${user ? `<p class="mb-4">Usuario: ${user.email}</p>` : `
+            <p class="mb-4">Por favor inicia sesión para continuar.</p>
+            <input type="email" id="email" placeholder="Correo" class="px-4 py-2 border rounded mb-2 w-full max-w-sm"/><br/>
+            <input type="password" id="password" placeholder="Contraseña" class="px-4 py-2 border rounded mb-4 w-full max-w-sm"/><br/>
+            <button onclick="login()" class="px-4 py-2 bg-animalium-green text-white rounded">Entrar</button>
+          `}
+        </div>
       `;
     }
+
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+      } catch (error) {
+        alert("Error al iniciar sesión: " + error.message);
+      }
+    }
   </script>
-</head>
-<body class="bg-gray-100 text-gray-800 font-sans">
-  <div id="app-root" class="min-h-screen flex items-center justify-center">
-    <p class="text-xl text-animalium-green">Cargando aplicación...</p>
-  </div>
 </body>
 </html>
