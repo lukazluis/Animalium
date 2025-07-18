@@ -1,96 +1,116 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animalium - Clínica Veterinaria</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Animalium - Clínica Veterinaria 🐾</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="antialiased bg-gray-100 text-gray-800">
-  <!-- Header with logo -->
-  <header class="p-6 bg-white shadow flex items-center justify-center">
-    <img src="https://your-domain.com/path-to-logo.png" alt="Animalium Logo" class="h-16">
-  </header>
-
-  <!-- Main container -->
-  <main class="max-w-md mx-auto mt-12 bg-white p-8 rounded-lg shadow-lg">
-    <!-- Login Form -->
-    <h1 class="text-2xl font-bold mb-6 text-center">Animalium - Iniciar Sesión</h1>
-    <form id="auth-form" class="space-y-4">
-      <input id="email" type="email" required placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded" />
-      <input id="password" type="password" required placeholder="Contraseña" class="w-full px-4 py-2 border rounded" />
-      <button type="button" id="login-btn" class="w-full px-4 py-2 bg-green-600 text-white rounded">Entrar</button>
-      <button type="button" id="show-register" class="w-full px-4 py-2 bg-yellow-400 text-white rounded">Registrarse</button>
-    </form>
-
-    <!-- Extended Registration Form -->
-    <form id="register-form" class="space-y-4 mt-6 hidden">
-      <input id="first-name" type="text" required placeholder="Nombre" class="w-full px-4 py-2 border rounded" />
-      <input id="last-name" type="text" required placeholder="Apellido" class="w-full px-4 py-2 border rounded" />
-      <input id="phone" type="tel" required placeholder="Teléfono" class="w-full px-4 py-2 border rounded" />
-      <input id="address" type="text" required placeholder="Dirección" class="w-full px-4 py-2 border rounded" />
-      <button type="button" id="register-btn" class="w-full px-4 py-2 bg-blue-500 text-white rounded">Enviar Registro</button>
-    </form>
-  </main>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    // == Configuración de Firebase ==
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
     const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "TU_AUTH_DOMAIN",
-      projectId: "TU_PROJECT_ID",
-      storageBucket: "TU_STORAGE_BUCKET",
-      messagingSenderId: "TU_MESSAGING_SENDER_ID",
-      appId: "TU_APP_ID"
+      apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
+      authDomain: "animalium-22e17.firebaseapp.com",
+      projectId: "animalium-22e17",
+      storageBucket: "animalium-22e17.appspot.com",
+      messagingSenderId: "800956760641",
+      appId: "1:800956760641:web:dab9057b718e240ec8bcc0"
     };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    // Mostrar/ocultar formulario de registro
-    document.getElementById('show-register').onclick = () => {
-      document.getElementById('auth-form').classList.add('hidden');
-      document.getElementById('register-form').classList.remove('hidden');
-    };
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        renderDashboard(user);
+      } else {
+        renderLogin();
+      }
+    });
 
-    // Login
-    document.getElementById('login-btn').onclick = async () => {
+    function renderLogin() {
+      document.getElementById("app-root").innerHTML = `
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+          <img src="https://raw.githubusercontent.com/lukazluis/main/logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <h1 class="text-3xl font-bold text-animalium-green mb-6">Animalium - Iniciar Sesión</h1>
+          <input id="email" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs" />
+          <input id="password" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs" />
+          <div class="flex gap-4 mb-4">
+            <button onclick="loginWithEmail()" class="px-4 py-2 bg-animalium-green text-white rounded">Entrar</button>
+            <button onclick="renderRegister()" class="px-4 py-2 bg-animalium-brown text-white rounded">Registrarse</button>
+          </div>
+        </div>`;
+    }
+
+    function renderRegister() {
+      document.getElementById("app-root").innerHTML = `
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+          <img src="https://raw.githubusercontent.com/lukazluis/main/logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <h1 class="text-3xl font-bold text-animalium-green mb-6">Registro Animalium</h1>
+          <input id="name" type="text" placeholder="Nombre" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="surname" type="text" placeholder="Apellido" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="phone" type="text" placeholder="Teléfono" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="address" type="text" placeholder="Dirección" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="emailReg" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="passwordReg" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs"/>
+          <button onclick="registerWithSurvey()" class="px-4 py-2 bg-animalium-green text-white rounded mb-4">Registrarse</button>
+          <p><a href="#" onclick="renderLogin()" class="text-animalium-green underline">Volver a Iniciar Sesión</a></p>
+        </div>`;
+    }
+
+    async function loginWithEmail() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       try {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert("Sesión iniciada!");
-        // Redirige o actualiza la UI
-      } catch(e) {
-        alert("Error: " + e.message);
+        await auth.signInWithEmailAndPassword(email, password);
+      } catch (err) {
+        alert('Error al iniciar sesión: ' + err.message);
       }
-    };
+    }
 
-    // Registro
-    document.getElementById('register-btn').onclick = async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const firstName = document.getElementById('first-name').value;
-      const lastName = document.getElementById('last-name').value;
+    async function registerWithSurvey() {
+      const name = document.getElementById('name').value;
+      const surname = document.getElementById('surname').value;
       const phone = document.getElementById('phone').value;
       const address = document.getElementById('address').value;
+      const email = document.getElementById('emailReg').value;
+      const password = document.getElementById('passwordReg').value;
       try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        // Guardar datos adicionales
-        await setDoc(doc(db, "users", userCred.user.uid), {
-          firstName, lastName, phone, address, email
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection('users').doc(result.user.uid).set({
+          name, surname, phone, address, email
         });
-        alert("Registro exitoso!");
-        // Redirige o muestra dashboard
-      } catch(e) {
-        alert("Error: " + e.message);
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
       }
-    };
+    }
+
+    function renderDashboard(user) {
+      document.getElementById("app-root").innerHTML = `
+        <header class="bg-white shadow p-4 text-center">
+          <h1 class="text-3xl font-bold text-animalium-green">Bienvenido, ${user.email}</h1>
+          <button onclick="logout()" class="mt-2 px-4 py-2 bg-red-500 text-white rounded">Cerrar sesión</button>
+        </header>
+        <main class="p-6 text-center">
+          <h2 class="text-xl font-semibold mb-6">Aquí irá tu panel de citas 🐾</h2>
+        </main>`;
+    }
+
+    function logout() {
+      auth.signOut();
+    }
   </script>
+  <style>
+    .text-animalium-green { color: #5F7C7D; }
+    .bg-animalium-green { background-color: #5F7C7D; }
+    .bg-animalium-brown { background-color: #CDB79F; }
+    body { font-family: system-ui, sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="app-root" class="min-h-screen flex items-center justify-center">
+    <p class="text-lg text-animalium-green">Cargando aplicación...</p>
+  </div>
 </body>
 </html>
