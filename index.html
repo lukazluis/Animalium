@@ -1,65 +1,775 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animalium - Clínica Veterinaria 🐾</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <style>
-    .text-animalium-green { color: #5F7C7D; }
-    .bg-animalium-green { background-color: #5F7C7D; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animalium - Clínica Veterinaria</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Importar los módulos necesarios de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, addDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // ====================================================================
+        // IMPORTANTE: PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE
+        // Puedes encontrarla en la consola de Firebase, en "Configuración del proyecto" -> "Tus apps"
+        // Debería verse algo como esto:
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_AUTH_DOMAIN",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_STORAGE_BUCKET",
+            messagingSenderId: "TU_MESSAGING_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+        // ====================================================================
+
+        // Inicializar Firebase
+        window.firebaseApp = initializeApp(firebaseConfig);
+        window.firebaseAuth = getAuth(window.firebaseApp);
+        window.firebaseDb = getFirestore(window.firebaseApp);
+        // Para esta versión standalone, el appId de Firebase se usará como base para las colecciones
+        window.appBaseCollection = `apps/${firebaseConfig.appId}`; // Una colección base para tu app
+
+        // Estado de autenticación global
+        window.currentUser = null;
+        window.currentUserId = null;
+        window.isAuthReady = false;
+
+        // Listener para cambios en el estado de autenticación
+        onAuthStateChanged(window.firebaseAuth, async (user) => {
+            if (user) {
+                window.currentUser = user;
+                window.currentUserId = user.uid;
+            } else {
+                // Si no hay usuario, inicia sesión anónimamente para permitir el acceso inicial a Firestore
+                try {
+                    await signInAnonymously(window.firebaseAuth);
+                } catch (error) {
+                    console.error("Firebase Auth Error (Anonymous Sign-in):", error);
+                }
+                window.currentUser = window.firebaseAuth.currentUser;
+                // Si signInAnonymously falla o no hay usuario, genera un ID aleatorio para el usuario no autenticado
+                window.currentUserId = window.firebaseAuth.currentUser?.uid || crypto.randomUUID();
+            }
+            window.isAuthReady = true;
+            // Una vez que la autenticación está lista, renderiza la página
+            renderPage();
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        .text-animalium-green {
+            color: #5F7C7D; /* Color de texto basado en el logo */
+        }
+        .bg-animalium-green {
+            background-color: #5F7C7D; /* Color de fondo basado en el logo */
+        }
+        .bg-animalium-brown {
+            background-color: #CDB79F; /* Color de fondo basado en el logo */
+        }
+        .border-animalium-green {
+            border-color: #5F7C7D;
+        }
+        .btn-primary {
+            @apply px-6 py-3 rounded-full font-semibold text-white bg-animalium-green hover:bg-opacity-90 transition-colors duration-300 shadow-md;
+        }
+        .section-title {
+            @apply text-3xl md:text-4xl font-bold text-animalium-green mb-8 text-center;
+        }
+        /* Custom scrollbar for subtle look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CDB79F;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5F7C7D;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
-  <div id="app-root" class="min-h-screen flex items-center justify-center p-6">
-    <p class="text-xl text-animalium-green">Cargando aplicación...</p>
-  </div>
+<body class="antialiased">
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
-      authDomain: "animalium-22e17.firebaseapp.com",
-      projectId: "animalium-22e17",
-      storageBucket: "animalium-22e17.appspot.com",
-      messagingSenderId: "800956760641",
-      appId: "1:800956760641:web:dab9057b718e240ec8bcc0"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    auth.onAuthStateChanged((user) => {
-      renderPage(user);
-    });
-
-    function renderPage(user) {
-      const root = document.getElementById("app-root");
-      root.innerHTML = `
-        <div class="text-center">
-          <img src="logo-animalium.jpg" class="mx-auto h-24 mb-4" alt="Logo Animalium"/>
-          <h1 class="text-2xl font-bold text-animalium-green mb-2">Bienvenido a Animalium</h1>
-          ${user ? `<p class="mb-4">Usuario: ${user.email}</p>` : `
-            <p class="mb-4">Por favor inicia sesión para continuar.</p>
-            <input type="email" id="email" placeholder="Correo" class="px-4 py-2 border rounded mb-2 w-full max-w-sm"/><br/>
-            <input type="password" id="password" placeholder="Contraseña" class="px-4 py-2 border rounded mb-4 w-full max-w-sm"/><br/>
-            <button onclick="login()" class="px-4 py-2 bg-animalium-green text-white rounded">Entrar</button>
-          `}
+    <div id="app-root">
+        <!-- El contenido se renderizará aquí por JavaScript -->
+        <div class="min-h-screen flex items-center justify-center bg-gray-100">
+            <p class="text-xl text-animalium-green">Cargando aplicación...</p>
         </div>
-      `;
-    }
+    </div>
 
-    async function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      try {
-        await firebase.auth().signInWithEmailAndPassword(email, password);
-      } catch (error) {
-        alert("Error al iniciar sesión: " + error.message);
-      }
-    }
-  </script>
+    <!-- Estructura del Modal Personalizado -->
+    <div id="custom-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p id="modal-message" class="text-lg text-gray-800 mb-4"></p>
+            <div id="modal-buttons" class="modal-buttons">
+                <!-- Los botones se inyectarán aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Asegurarse de que los módulos de Firebase estén cargados antes de usarlos
+        import { getAuth, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, addDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const appRoot = document.getElementById('app-root');
+        let currentPage = 'home'; // 'home', 'dashboard', 'auth'
+
+        // --- Funciones del Modal Personalizado ---
+        function showModal(message, type = 'alert', onConfirm = null) {
+            const modal = document.getElementById('custom-modal');
+            const modalMessage = document.getElementById('modal-message');
+            const modalButtons = document.getElementById('modal-buttons');
+
+            modalMessage.textContent = message;
+            modalButtons.innerHTML = ''; // Limpiar botones anteriores
+
+            if (type === 'alert') {
+                const okButton = document.createElement('button');
+                okButton.textContent = 'OK';
+                okButton.className = 'px-4 py-2 bg-animalium-green text-white rounded-md hover:bg-opacity-90';
+                okButton.onclick = () => modal.classList.add('hidden');
+                modalButtons.appendChild(okButton);
+            } else if (type === 'confirm') {
+                const confirmButton = document.createElement('button');
+                confirmButton.textContent = 'Confirmar';
+                confirmButton.className = 'px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600';
+                confirmButton.onclick = () => {
+                    modal.classList.add('hidden');
+                    if (onConfirm) onConfirm(true);
+                };
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Cancelar';
+                cancelButton.className = 'px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400';
+                cancelButton.onclick = () => {
+                    modal.classList.add('hidden');
+                    if (onConfirm) onConfirm(false);
+                };
+                modalButtons.appendChild(confirmButton);
+                modalButtons.appendChild(cancelButton);
+            }
+            modal.classList.remove('hidden');
+        }
+
+        // --- Funciones de Navegación ---
+        function navigateTo(page) {
+            currentPage = page;
+            renderPage();
+        }
+
+        function handleLogout() {
+            showModal('¿Estás seguro de que quieres cerrar sesión?', 'confirm', async (confirmed) => {
+                if (confirmed) {
+                    try {
+                        await signOut(window.firebaseAuth);
+                        navigateTo('home');
+                        showModal('Sesión cerrada con éxito.', 'alert');
+                    } catch (error) {
+                        console.error("Error al cerrar sesión:", error);
+                        showModal(`Error al cerrar sesión: ${error.message}`, 'alert');
+                    }
+                }
+            });
+        }
+
+        // --- Funciones de Renderizado ---
+
+        function renderHeader() {
+            const isLoggedIn = window.currentUser && window.currentUser.email;
+            return `
+                <header class="bg-white shadow-sm py-4">
+                    <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+                        <div class="mb-4 md:mb-0">
+                            <img src="http://googleusercontent.com/file_content/0" alt="Animalium Logo" class="h-20 w-auto rounded-lg">
+                        </div>
+                        <nav class="w-full md:w-auto">
+                            <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 text-lg font-medium text-animalium-green">
+                                <li><a href="#" onclick="navigateTo('home')" class="hover:text-animalium-brown transition-colors duration-200">Inicio</a></li>
+                                <li><a href="#servicios" onclick="navigateTo('home')" class="hover:text-animalium-brown transition-colors duration-200">Servicios</a></li>
+                                <li><a href="#nosotros" onclick="navigateTo('home')" class="hover:text-animalium-brown transition-colors duration-200">Nosotros</a></li>
+                                <li><a href="#fotos" onclick="navigateTo('home')" class="hover:text-animalium-brown transition-colors duration-200">Fotos</a></li>
+                                <li><a href="#contacto" onclick="navigateTo('home')" class="hover:text-animalium-brown transition-colors duration-200">Contacto</a></li>
+                                ${isLoggedIn ? `
+                                    <li><button onclick="navigateTo('dashboard')" class="hover:text-animalium-brown transition-colors duration-200">Mi Cuenta</button></li>
+                                    <li><button onclick="handleLogout()" class="hover:text-animalium-brown transition-colors duration-200">Cerrar Sesión</button></li>
+                                ` : `
+                                    <li><button onclick="navigateTo('auth')" class="hover:text-animalium-brown transition-colors duration-200">Iniciar Sesión / Registrarse</button></li>
+                                `}
+                            </ul>
+                        </nav>
+                    </div>
+                </header>
+            `;
+        }
+
+        function renderHeroSection() {
+            return `
+                <section id="inicio" class="relative bg-animalium-green text-white py-20 md:py-32 overflow-hidden">
+                    <div class="container mx-auto px-4 text-center relative z-10">
+                        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+                            Cuidado Experto para tus Pequeñas Especies
+                        </h1>
+                        <p class="text-xl md:text-2xl mb-10 max-w-3xl mx-auto">
+                            En Animalium, ofrecemos atención veterinaria integral y especializada para perros, gatos y otras pequeñas mascotas, incluyendo diagnósticos avanzados con ultrasonido.
+                        </p>
+                        <button onclick="navigateTo('auth')" class="btn-primary bg-animalium-brown hover:bg-opacity-80">Agenda tu Cita Hoy</button>
+                    </div>
+                    <div class="absolute inset-0 opacity-10">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <circle cx="20" cy="80" r="15" fill="currentColor" class="text-animalium-brown"></circle>
+                            <circle cx="80" cy="20" r="10" fill="currentColor" class="text-animalium-brown"></circle>
+                            <rect x="50" y="50" width="30" height="30" rx="5" ry="5" fill="currentColor" class="text-animalium-brown"></rect>
+                        </svg>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderServicesSection() {
+            return `
+                <section id="servicios" class="py-16 md:py-24 bg-white">
+                    <div class="container mx-auto px-4">
+                        <h2 class="section-title">Nuestros Servicios</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-animalium-green/20">
+                                <div class="text-animalium-green text-5xl mb-4 text-center">🐾</div>
+                                <h3 class="text-2xl font-semibold text-animalium-green mb-3 text-center">Consulta General</h3>
+                                <p class="text-gray-700 text-center">
+                                    Chequeos de rutina, diagnósticos, tratamientos para enfermedades comunes y asesoramiento para el bienestar de tu mascota.
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-animalium-green/20">
+                                <div class="text-animalium-green text-5xl mb-4 text-center">🩺</div>
+                                <h3 class="text-2xl font-semibold text-animalium-green mb-3 text-center">Diagnóstico por Ultrasonido</h3>
+                                <p class="text-gray-700 text-center">
+                                    Tecnología avanzada para un diagnóstico preciso de condiciones internas, vital para la salud de tus pequeñas especies.
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-animalium-green/20">
+                                <div class="text-animalium-green text-5xl mb-4 text-center">💉</div>
+                                <h3 class="text-2xl font-semibold text-animalium-green mb-3 text-center">Vacunación y Desparasitación</h3>
+                                <p class="text-gray-700 text-center">
+                                    Programas completos de prevención para proteger a tu mascota contra enfermedades y parásitos.
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-animalium-green/20">
+                                <div class="text-animalium-green text-5xl mb-4 text-center">🔪</div>
+                                <h3 class="text-2xl font-semibold text-animalium-green mb-3 text-center">Cirugía</h3>
+                                <p class="text-gray-700 text-center">
+                                    Procedimientos quirúrgicos seguros y efectivos, realizados con el mayor cuidado y profesionalismo.
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-animalium-green/20">
+                                <div class="text-animalium-green text-5xl mb-4 text-center">🔬</div>
+                                <h3 class="text-2xl font-semibold text-animalium-green mb-3 text-center">Laboratorio Clínico</h3>
+                                <p class="text-gray-700 text-center">
+                                    Análisis de sangre, orina y otros estudios para un diagnóstico rápido y preciso.
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-animalium-green/20">
+                                <div class="text-animalium-green text-5xl mb-4 text-center">💊</div>
+                                <h3 class="text-2xl font-semibold text-animalium-green mb-3 text-center">Farmacia Veterinaria</h3>
+                                <p class="text-gray-700 text-center">
+                                    Medicamentos y productos de alta calidad para el tratamiento y cuidado continuo de tu mascota.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderAboutUsSection() {
+            return `
+                <section id="nosotros" class="py-16 md:py-24 bg-animalium-brown text-white">
+                    <div class="container mx-auto px-4 text-center">
+                        <h2 class="section-title text-white">Sobre Nosotros</h2>
+                        <div class="max-w-4xl mx-auto text-lg md:text-xl leading-relaxed">
+                            <p class="mb-6">
+                                En Animalium, nuestra pasión es la salud y el bienestar de tus compañeros de cuatro patas. Somos una clínica veterinaria dedicada exclusivamente a pequeñas especies, ofreciendo un servicio cálido, profesional y de la más alta calidad.
+                            </p>
+                            <p>
+                                Contamos con un equipo de veterinarios experimentados y las últimas tecnologías, incluyendo equipos de ultrasonido de vanguardia, para asegurar que tus mascotas reciban el mejor cuidado posible. Tu tranquilidad es nuestra prioridad.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderClinicPhotos() {
+            const photos = [
+                { id: 1, url: 'https://placehold.co/600x400/CDB79F/5F7C7D?text=Clínica+1', description: 'Nuestra sala de espera acogedora.' },
+                { id: 2, url: 'https://placehold.co/600x400/5F7C7D/CDB79F?text=Clínica+2', description: 'Equipo de ultrasonido de última generación.' },
+                { id: 3, url: 'https://placehold.co/600x400/CDB79F/5F7C7D?text=Clínica+3', description: 'Área de consulta y revisión.' },
+                { id: 4, url: 'https://placehold.co/600x400/5F7C7D/CDB79F?text=Clínica+4', description: 'Nuestro equipo médico listo para atenderte.' },
+            ];
+            return `
+                <section id="fotos" class="py-16 md:py-24 bg-white">
+                    <div class="container mx-auto px-4">
+                        <h2 class="section-title">Fotos de Nuestra Clínica</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            ${photos.map(photo => `
+                                <div class="bg-gray-50 rounded-xl shadow-lg overflow-hidden border border-animalium-green/20">
+                                    <img src="${photo.url}" alt="${photo.description}" class="w-full h-48 object-cover rounded-t-xl" />
+                                    <p class="p-4 text-center text-gray-700 text-sm">${photo.description}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <p class="text-center text-gray-600 mt-8 text-sm">
+                            (En una aplicación real, aquí habría una función para que el personal de la clínica suba y gestione estas fotos.)
+                        </p>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderContactSection() {
+            return `
+                <section id="contacto" class="py-16 md:py-24 bg-white">
+                    <div class="container mx-auto px-4">
+                        <h2 class="section-title">Contáctanos</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                            <div class="bg-gray-50 p-8 rounded-xl shadow-lg border border-animalium-green/20">
+                                <h3 class="text-2xl font-semibold text-animalium-green mb-6">Información de Contacto</h3>
+                                <ul class="space-y-4 text-lg text-gray-700">
+                                    <li><strong>📍 Dirección:</strong> [Tu Dirección Aquí], [Tu Ciudad], [Tu Estado], México</li>
+                                    <li><strong>📞 Teléfono:</strong> <a href="tel:+521234567890" class="text-animalium-green hover:underline">+52 123 456 7890</a></li>
+                                    <li><strong>📧 Email:</strong> <a href="mailto:info@animalium.mx" class="text-animalium-green hover:underline">info@animalium.mx</a></li>
+                                    <li><strong>⏰ Horario:</strong> Lunes a Viernes: 9:00 AM - 6:00 PM | Sábados: 9:00 AM - 2:00 PM</li>
+                                </ul>
+                                <div class="mt-8">
+                                    <a href="https://www.facebook.com/animalium.mx" target="_blank" rel="noopener noreferrer" class="btn-primary inline-flex items-center">
+                                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33V22C17.34 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                                        </svg>
+                                        Visita nuestro Facebook
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-xl shadow-lg border border-animalium-green/20 min-h-[300px] flex items-center justify-center">
+                                <p class="text-gray-600 text-center">
+                                    [Aquí puedes insertar un mapa de Google Maps con la ubicación de tu clínica]
+                                    <br>
+                                    <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" class="text-animalium-green hover:underline mt-2 inline-block">Ver en Google Maps</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderFooter() {
+            return `
+                <footer class="bg-gray-800 text-white py-8">
+                    <div class="container mx-auto px-4 text-center text-sm">
+                        <p>&copy; 2025 Animalium - Clínica Veterinaria. Todos los derechos reservados.</p>
+                        <p class="mt-2">Diseñado con ❤️ para tus mascotas.</p>
+                    </div>
+                </footer>
+            `;
+        }
+
+        function renderAuthPage() {
+            const authContent = `
+                <div class="min-h-screen flex items-center justify-center bg-animalium-brown py-12 px-4 sm:px-6 lg:px-8">
+                    <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
+                        <h2 id="auth-title" class="mt-6 text-center text-3xl font-extrabold text-animalium-green">
+                            Iniciar Sesión
+                        </h2>
+                        <form id="auth-form" class="mt-8 space-y-6">
+                            <div>
+                                <label for="email-address" class="sr-only">Email</label>
+                                <input
+                                    id="auth-email"
+                                    name="email"
+                                    type="email"
+                                    autocomplete="email"
+                                    required
+                                    class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-animalium-green focus:border-animalium-green focus:z-10 sm:text-sm"
+                                    placeholder="Correo electrónico"
+                                />
+                            </div>
+                            <div>
+                                <label for="password" class="sr-only">Contraseña</label>
+                                <input
+                                    id="auth-password"
+                                    name="password"
+                                    type="password"
+                                    autocomplete="current-password"
+                                    required
+                                    class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-animalium-green focus:border-animalium-green focus:z-10 sm:text-sm"
+                                    placeholder="Contraseña"
+                                />
+                            </div>
+                            <div>
+                                <button
+                                    type="submit"
+                                    id="auth-submit-btn"
+                                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-animalium-green hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-animalium-green"
+                                >
+                                    Iniciar Sesión
+                                </button>
+                            </div>
+                        </form>
+                        <div class="text-center">
+                            <button
+                                id="toggle-auth-mode"
+                                class="font-medium text-animalium-green hover:text-animalium-brown"
+                            >
+                                ¿No tienes cuenta? Regístrate
+                            </button>
+                        </div>
+                        <p id="auth-message" class="mt-2 text-center text-sm text-red-600"></p>
+                    </div>
+                </div>
+            `;
+            appRoot.innerHTML = renderHeader() + authContent;
+            attachAuthListeners();
+        }
+
+        function attachAuthListeners() {
+            let isRegistering = false;
+            const authForm = document.getElementById('auth-form');
+            const authEmailInput = document.getElementById('auth-email');
+            const authPasswordInput = document.getElementById('auth-password');
+            const authSubmitBtn = document.getElementById('auth-submit-btn');
+            const authTitle = document.getElementById('auth-title');
+            const toggleAuthModeBtn = document.getElementById('toggle-auth-mode');
+            const authMessage = document.getElementById('auth-message');
+
+            if (!authForm) return; // Salir si los elementos no se encuentran (ej. no en la página de autenticación)
+
+            toggleAuthModeBtn.onclick = () => {
+                isRegistering = !isRegistering;
+                authTitle.textContent = isRegistering ? 'Crear Cuenta' : 'Iniciar Sesión';
+                authSubmitBtn.textContent = isRegistering ? 'Registrarse' : 'Iniciar Sesión';
+                toggleAuthModeBtn.textContent = isRegistering ? '¿Ya tienes cuenta? Inicia Sesión' : '¿No tienes cuenta? Regístrate';
+                authMessage.textContent = ''; // Limpiar mensaje al cambiar modo
+            };
+
+            authForm.onsubmit = async (e) => {
+                e.preventDefault();
+                authMessage.textContent = '';
+                const email = authEmailInput.value;
+                const password = authPasswordInput.value;
+
+                try {
+                    if (isRegistering) {
+                        await createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+                        showModal('Registro exitoso. ¡Bienvenido!', 'alert', () => navigateTo('dashboard'));
+                    } else {
+                        await signInWithEmailAndPassword(window.firebaseAuth, email, password);
+                        showModal('Inicio de sesión exitoso.', 'alert', () => navigateTo('dashboard'));
+                    }
+                } catch (error) {
+                    authMessage.textContent = `Error: ${error.message}`;
+                    console.error("Error de autenticación:", error);
+                }
+            };
+        }
+
+        function renderDashboard() {
+            if (!window.currentUser || !window.currentUserId) {
+                appRoot.innerHTML = renderHeader() + `
+                    <div class="min-h-screen flex items-center justify-center">
+                        <p class="text-xl text-red-500">Acceso denegado. Por favor, inicia sesión.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const dashboardContent = `
+                <section class="py-16 md:py-24 bg-gray-50">
+                    <div class="container mx-auto px-4">
+                        <h2 class="section-title">Bienvenido, ${window.currentUser.email}!</h2>
+                        <p class="text-center text-gray-600 mb-8">
+                            Tu ID de Usuario: <span class="font-mono text-sm bg-gray-200 p-1 rounded">${window.currentUserId}</span>
+                        </p>
+
+                        <div class="mb-8 text-center">
+                            <button id="toggle-appointment-form" class="btn-primary bg-animalium-green">
+                                Agendar Nueva Cita
+                            </button>
+                        </div>
+
+                        <div id="appointment-form-container" class="max-w-md mx-auto mb-12 hidden">
+                            <div class="bg-white p-6 rounded-xl shadow-lg border border-animalium-green/20">
+                                <h3 class="text-2xl font-semibold text-animalium-green mb-4">Agendar Nueva Cita</h3>
+                                <form id="appointment-form" class="space-y-4">
+                                    <div>
+                                        <label for="appointment-date" class="block text-sm font-medium text-gray-700">Fecha</label>
+                                        <input
+                                            type="date"
+                                            id="appointment-date"
+                                            required
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-animalium-green focus:ring-animalium-green sm:text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label for="appointment-time" class="block text-sm font-medium text-gray-700">Hora</label>
+                                        <input
+                                            type="time"
+                                            id="appointment-time"
+                                            required
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-animalium-green focus:ring-animalium-green sm:text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label for="appointment-service" class="block text-sm font-medium text-gray-700">Servicio</label>
+                                        <select
+                                            id="appointment-service"
+                                            required
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-animalium-green focus:ring-animalium-green sm:text-sm"
+                                        >
+                                            <option value="Consulta General">Consulta General</option>
+                                            <option value="Ultrasonido">Ultrasonido</option>
+                                            <option value="Vacunación">Vacunación</option>
+                                            <option value="Cirugía">Cirugía (Evaluación)</option>
+                                            <option value="Laboratorio">Laboratorio Clínico</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn-primary w-full">Agendar Cita</button>
+                                    <p id="appointment-message" class="mt-2 text-center text-sm text-red-600"></p>
+                                </form>
+                            </div>
+                        </div>
+
+                        <h3 class="text-2xl font-semibold text-animalium-green mb-6 text-center">Tus Citas Agendadas</h3>
+                        <div id="appointments-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <p class="text-center text-gray-600 col-span-full">Cargando citas...</p>
+                        </div>
+                    </div>
+                </section>
+            `;
+            appRoot.innerHTML = renderHeader() + dashboardContent;
+            attachDashboardListeners();
+            fetchAppointments(); // Iniciar la carga de citas
+        }
+
+        let unsubscribeAppointments = null; // Para almacenar la función de desuscripción del listener de Firestore
+
+        function attachDashboardListeners() {
+            const toggleFormBtn = document.getElementById('toggle-appointment-form');
+            const formContainer = document.getElementById('appointment-form-container');
+            const appointmentForm = document.getElementById('appointment-form');
+            const appointmentDateInput = document.getElementById('appointment-date');
+            const appointmentTimeInput = document.getElementById('appointment-time');
+            const appointmentServiceSelect = document.getElementById('appointment-service');
+            const appointmentMessage = document.getElementById('appointment-message');
+
+            if (toggleFormBtn) {
+                toggleFormBtn.onclick = () => {
+                    formContainer.classList.toggle('hidden');
+                    toggleFormBtn.textContent = formContainer.classList.contains('hidden') ? 'Agendar Nueva Cita' : 'Ocultar Formulario de Citas';
+                };
+            }
+
+            if (appointmentForm) {
+                appointmentForm.onsubmit = async (e) => {
+                    e.preventDefault();
+                    appointmentMessage.textContent = '';
+
+                    const date = appointmentDateInput.value;
+                    const time = appointmentTimeInput.value;
+                    const service = appointmentServiceSelect.value;
+
+                    if (!window.currentUser || !window.currentUserId) {
+                        appointmentMessage.textContent = 'Debes iniciar sesión para agendar una cita.';
+                        return;
+                    }
+
+                    try {
+                        // Ruta de Firestore para datos privados del usuario
+                        const appointmentsCollectionRef = collection(window.firebaseDb, `${window.appBaseCollection}/users/${window.currentUserId}/appointments`);
+                        await addDoc(appointmentsCollectionRef, {
+                            date,
+                            time,
+                            service,
+                            userId: window.currentUser.uid,
+                            userName: window.currentUser.email,
+                            status: 'Pendiente',
+                            createdAt: serverTimestamp(),
+                        });
+                        showModal('Cita agendada con éxito!', 'alert', () => {
+                            appointmentDateInput.value = '';
+                            appointmentTimeInput.value = '';
+                            appointmentServiceSelect.value = 'Consulta General';
+                            formContainer.classList.add('hidden'); // Ocultar formulario después de agendar
+                            toggleFormBtn.textContent = 'Agendar Nueva Cita';
+                        });
+                    } catch (error) {
+                        appointmentMessage.textContent = `Error al agendar cita: ${error.message}`;
+                        console.error("Error al agendar cita:", error);
+                    }
+                };
+            }
+        }
+
+        function fetchAppointments() {
+            if (unsubscribeAppointments) {
+                unsubscribeAppointments(); // Desuscribirse del listener anterior si existe
+            }
+
+            if (!window.currentUserId) {
+                document.getElementById('appointments-list').innerHTML = '<p class="text-center text-gray-600 col-span-full">Inicia sesión para ver tus citas.</p>';
+                return;
+            }
+
+            const appointmentsCollectionRef = collection(window.firebaseDb, `${window.appBaseCollection}/users/${window.currentUserId}/appointments`);
+            const q = query(appointmentsCollectionRef);
+
+            unsubscribeAppointments = onSnapshot(q, (snapshot) => {
+                const appointmentsListDiv = document.getElementById('appointments-list');
+                if (!appointmentsListDiv) return; // Protección si el elemento no existe (ej. la página cambió)
+
+                const fetchedAppointments = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                fetchedAppointments.sort((a, b) => {
+                    const dateTimeA = new Date(`${a.date}T${a.time}`);
+                    const dateTimeB = new Date(`${b.date}T${b.time}`);
+                    return dateTimeA - dateTimeB;
+                });
+
+                if (fetchedAppointments.length === 0) {
+                    appointmentsListDiv.innerHTML = '<p class="text-center text-gray-600 col-span-full">No tienes citas agendadas. ¡Agenda una ahora!</p>';
+                } else {
+                    appointmentsListDiv.innerHTML = fetchedAppointments.map(appointment => `
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-animalium-brown/20">
+                            <p class="text-lg font-bold text-animalium-green">${appointment.service}</p>
+                            <p class="text-gray-700">Fecha: ${appointment.date}</p>
+                            <p class="text-gray-700">Hora: ${appointment.time}</p>
+                            <p class="text-gray-700">Estado: <span class="font-semibold ${appointment.status === 'Pendiente' ? 'text-orange-500' : 'text-green-600'}">${appointment.status}</span></p>
+                            <p class="text-gray-500 text-sm mt-2">Agendada el: ${appointment.createdAt ? new Date(appointment.createdAt.seconds * 1000).toLocaleString() : 'N/A'}</p>
+                            <button
+                                onclick="deleteAppointment('${appointment.id}')"
+                                class="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-200 text-sm"
+                            >
+                                Cancelar Cita
+                            </button>
+                        </div>
+                    `).join('');
+                }
+            }, (error) => {
+                console.error("Error al obtener citas:", error);
+                document.getElementById('appointments-list').innerHTML = '<p class="text-center text-red-600 col-span-full">Error al cargar citas.</p>';
+            });
+        }
+
+        window.deleteAppointment = async (id) => {
+            showModal('¿Estás seguro de que quieres cancelar esta cita?', 'confirm', async (confirmed) => {
+                if (confirmed) {
+                    try {
+                        const appointmentDocRef = doc(window.firebaseDb, `${window.appBaseCollection}/users/${window.currentUserId}/appointments`, id);
+                        await deleteDoc(appointmentDocRef);
+                        showModal('Cita cancelada con éxito.', 'alert');
+                    } catch (error) {
+                        console.error("Error al eliminar cita:", error);
+                        showModal('Error al cancelar la cita.', 'alert');
+                    }
+                }
+            });
+        };
+
+        // --- Lógica Principal de Renderizado ---
+        function renderPage() {
+            if (!window.isAuthReady) {
+                appRoot.innerHTML = `
+                    <div class="min-h-screen flex items-center justify-center bg-gray-100">
+                        <p class="text-xl text-animalium-green">Cargando aplicación...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let content = '';
+            switch (currentPage) {
+                case 'auth':
+                    renderAuthPage(); // La página de autenticación maneja su propio renderizado y listeners
+                    return;
+                case 'dashboard':
+                    if (window.currentUser && window.currentUser.email) {
+                        renderDashboard(); // El dashboard maneja su propio renderizado y listeners
+                        return;
+                    } else {
+                        // Si de alguna manera se navegó al dashboard sin iniciar sesión, redirigir a autenticación
+                        currentPage = 'auth';
+                        renderAuthPage();
+                        return;
+                    }
+                case 'home':
+                default:
+                    content = renderHeader() +
+                              renderHeroSection() +
+                              renderServicesSection() +
+                              renderAboutUsSection() +
+                              renderClinicPhotos() +
+                              renderContactSection() +
+                              renderFooter();
+                    appRoot.innerHTML = content;
+                    break;
+            }
+        }
+
+        // Renderizado inicial cuando el script se carga y se determina el estado de autenticación
+        window.onload = () => {
+            renderPage();
+        };
+
+        // Hacer que navigateTo y handleLogout sean accesibles globalmente para atributos onclick
+        window.navigateTo = navigateTo;
+        window.handleLogout = handleLogout;
+        window.showModal = showModal; // Hacer el modal accesible globalmente
+    </script>
 </body>
 </html>
