@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animalium - Clínica Veterinaria</title>
+    <title>Animalium - Clínica Veterinaria 🐾</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Inter -->
@@ -15,7 +15,15 @@
         import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Global variables provided by the Canvas environment
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const firebaseConfig = {
+  apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
+  authDomain: "animalium-22e17.firebaseapp.com",
+  projectId: "animalium-22e17",
+  storageBucket: "animalium-22e17.appspot.com",
+  messagingSenderId: "800956760641",
+  appId: "1:800956760641:web:dab9057b718e240ec8bcc0",
+  measurementId: "G-NBC5NT1GJD"
+};
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
@@ -30,27 +38,6 @@
         window.currentUserId = null;
         window.isAuthReady = false;
 
-        onAuthStateChanged(window.firebaseAuth, async (user) => {
-            if (user) {
-                window.currentUser = user;
-                window.currentUserId = user.uid;
-            } else {
-                try {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(window.firebaseAuth, initialAuthToken);
-                    } else {
-                        await signInAnonymously(window.firebaseAuth);
-                    }
-                } catch (error) {
-                    console.error("Firebase Auth Error:", error);
-                }
-                window.currentUser = window.firebaseAuth.currentUser;
-                window.currentUserId = window.firebaseAuth.currentUser?.uid || crypto.randomUUID();
-            }
-            window.isAuthReady = true;
-            // Once auth is ready, render the appropriate page
-            renderPage();
-        });
     </script>
 
     <style>
@@ -760,5 +747,107 @@
         window.handleLogout = handleLogout;
         window.showModal = showModal; // Make modal globally accessible
     </script>
+    
+    <script type="module">
+  // 1) Importa Firebase y tus módulos
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signInAnonymously,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    addDoc,
+    deleteDoc,
+    onSnapshot,
+    query,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // 2) Tu configuración de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
+    authDomain: "animalium-22e17.firebaseapp.com",
+    projectId: "animalium-22e17",
+    storageBucket: "animalium-22e17.appspot.com",
+    messagingSenderId: "800956760641",
+    appId: "1:800956760641:web:dab9057b718e240ec8bcc0",
+    measurementId: "G-NBC5NT1GJD"
+  };
+
+  // 3) Inicializa Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // 4) Estado global
+  window.currentUser = null;
+  window.currentUserId = null;
+  window.isAuthReady = false;
+
+  // 5) Listener de autenticación
+  onAuthStateChanged(auth, user => {
+    window.currentUser = user;
+    window.currentUserId = user?.uid || crypto.randomUUID();
+    window.isAuthReady = true;
+    renderPage();
+  });
+
+  // 6) (Pega aquí todo tu código de UI:)
+  //    - showModal(...)
+  //    - navigateTo(...)
+  //    - renderHeader(), renderHeroSection(), renderServicesSection(),
+  //      renderAboutUsSection(), renderClinicPhotos(), renderContactSection(),
+  //      renderFooter(), renderAuthPage(), attachAuthListeners(),
+  //      renderDashboard(), attachDashboardListeners(), fetchAppointments(),
+  //      deleteAppointment(), renderPage()
+
+  // 7) Inicia manualmente en carga
+  window.onload = () => {
+    if (window.isAuthReady) renderPage();
+  };
+</script>
 </body>
+
+<!-- Error Overlay -->
+<div id="error-overlay" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-height: 30%;
+  overflow-y: auto;
+  background: rgba(255,0,0,0.9);
+  color: white;
+  font-family: monospace;
+  padding: 0.5rem;
+  z-index: 9999;
+  display: none;
+"></div>
+
+<script>
+  // Captura errores no controlados y muestra un overlay
+  window.onerror = function(message, source, lineno, colno, error) {
+    const overlay = document.getElementById('error-overlay');
+    overlay.style.display = 'block';
+    overlay.innerHTML +=
+      '<div><strong>' + message + '</strong><br>' +
+      source + ':' + lineno + ':' + colno + '</div><hr>';
+    // Evita el log en consola (opcional)
+    return true;
+  };
+  // Captura promesas rechazadas
+  window.addEventListener('unhandledrejection', function(evt) {
+    const overlay = document.getElementById('error-overlay');
+    overlay.style.display = 'block';
+    overlay.innerHTML +=
+      '<div><strong>Promise Rejection:</strong> ' + evt.reason + '</div><hr>';
+  });
+</script>
 </html>
