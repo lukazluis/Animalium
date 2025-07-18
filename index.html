@@ -5,74 +5,112 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Animalium - Clínica Veterinaria 🐾</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
+      authDomain: "animalium-22e17.firebaseapp.com",
+      projectId: "animalium-22e17",
+      storageBucket: "animalium-22e17.appspot.com",
+      messagingSenderId: "800956760641",
+      appId: "1:800956760641:web:dab9057b718e240ec8bcc0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        renderDashboard(user);
+      } else {
+        renderLogin();
+      }
+    });
+
+    function renderLogin() {
+      document.getElementById("app-root").innerHTML = `
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+          <img src="https://raw.githubusercontent.com/lukazluis/main/logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <h1 class="text-3xl font-bold text-animalium-green mb-6">Animalium - Iniciar Sesión</h1>
+          <input id="email" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs" />
+          <input id="password" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs" />
+          <div class="flex gap-4 mb-4">
+            <button onclick="loginWithEmail()" class="px-4 py-2 bg-animalium-green text-white rounded">Entrar</button>
+            <button onclick="renderRegister()" class="px-4 py-2 bg-animalium-brown text-white rounded">Registrarse</button>
+          </div>
+        </div>`;
+    }
+
+    function renderRegister() {
+      document.getElementById("app-root").innerHTML = `
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+          <img src="https://raw.githubusercontent.com/lukazluis/main/logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <h1 class="text-3xl font-bold text-animalium-green mb-6">Registro Animalium</h1>
+          <input id="name" type="text" placeholder="Nombre" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="surname" type="text" placeholder="Apellido" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="phone" type="text" placeholder="Teléfono" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="address" type="text" placeholder="Dirección" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="emailReg" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="passwordReg" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs"/>
+          <button onclick="registerWithSurvey()" class="px-4 py-2 bg-animalium-green text-white rounded mb-4">Registrarse</button>
+          <p><a href="#" onclick="renderLogin()" class="text-animalium-green underline">Volver a Iniciar Sesión</a></p>
+        </div>`;
+    }
+
+    async function loginWithEmail() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+      } catch (err) {
+        alert('Error al iniciar sesión: ' + err.message);
+      }
+    }
+
+    async function registerWithSurvey() {
+      const name = document.getElementById('name').value;
+      const surname = document.getElementById('surname').value;
+      const phone = document.getElementById('phone').value;
+      const address = document.getElementById('address').value;
+      const email = document.getElementById('emailReg').value;
+      const password = document.getElementById('passwordReg').value;
+      try {
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection('users').doc(result.user.uid).set({
+          name, surname, phone, address, email
+        });
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
+    }
+
+    function renderDashboard(user) {
+      document.getElementById("app-root").innerHTML = `
+        <header class="bg-white shadow p-4 text-center">
+          <h1 class="text-3xl font-bold text-animalium-green">Bienvenido, ${user.email}</h1>
+          <button onclick="logout()" class="mt-2 px-4 py-2 bg-red-500 text-white rounded">Cerrar sesión</button>
+        </header>
+        <main class="p-6 text-center">
+          <h2 class="text-xl font-semibold mb-6">Aquí irá tu panel de citas 🐾</h2>
+        </main>`;
+    }
+
+    function logout() {
+      auth.signOut();
+    }
+  </script>
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background-color: #f9f9f9;
-    }
-    .text-animalium-green {
-      color: #5F7C7D;
-    }
-    .bg-animalium-green {
-      background-color: #5F7C7D;
-    }
+    .text-animalium-green { color: #5F7C7D; }
+    .bg-animalium-green { background-color: #5F7C7D; }
+    .bg-animalium-brown { background-color: #CDB79F; }
+    body { font-family: system-ui, sans-serif; }
   </style>
 </head>
-<body class="flex flex-col items-center justify-start min-h-screen py-6 px-4">
-  <header class="w-full text-center mb-6">
-    <img src="logo-animalium.png" alt="Animalium Logo" class="mx-auto h-28 mb-2" />
-    <h1 class="text-3xl font-bold text-animalium-green">Animalium</h1>
-    <p class="text-sm text-gray-600">Clínica Veterinaria para pequeñas especies</p>
-  </header>
-
-  <!-- Main welcome content -->
-  <main id="welcome-section" class="text-center">
-    <h2 class="text-xl font-semibold mb-2">¡Bienvenido a Animalium!</h2>
-    <p class="mb-4">Tu sitio web está funcionando correctamente con Firebase. 🐾</p>
-    <div class="space-x-4">
-      <button id="btnRegister" class="px-6 py-2 bg-animalium-green text-white rounded-full">Registrarse</button>
-      <button id="btnLogin" class="px-6 py-2 border border-animalium-green text-animalium-green rounded-full">Entrar</button>
-    </div>
-  </main>
-
-  <!-- Registration survey form -->
-  <section id="register-section" class="w-full max-w-md bg-white p-6 rounded-lg shadow-lg hidden">
-    <h2 class="text-2xl font-semibold text-animalium-green mb-4 text-center">Registro</h2>
-    <form id="register-form" class="space-y-4">
-      <div><input type="text" name="firstName" placeholder="Nombre" required class="w-full border px-3 py-2 rounded" /></div>
-      <div><input type="text" name="lastName" placeholder="Apellido" required class="w-full border px-3 py-2 rounded" /></div>
-      <div><input type="text" name="address" placeholder="Dirección" required class="w-full border px-3 py-2 rounded" /></div>
-      <div><input type="tel" name="phone" placeholder="Teléfono" required class="w-full border px-3 py-2 rounded" /></div>
-      <div><input type="email" name="email" placeholder="Correo electrónico" required class="w-full border px-3 py-2 rounded" /></div>
-      <div><input type="password" name="password" placeholder="Contraseña" required class="w-full border px-3 py-2 rounded" /></div>
-      <div class="flex justify-between">
-        <button type="button" id="cancelRegister" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-        <button type="submit" class="px-4 py-2 bg-animalium-green text-white rounded">Enviar</button>
-      </div>
-    </form>
-  </section>
-
-  <script>
-    const welcome = document.getElementById('welcome-section');
-    const registerSection = document.getElementById('register-section');
-    document.getElementById('btnRegister').addEventListener('click', () => {
-      welcome.classList.add('hidden');
-      registerSection.classList.remove('hidden');
-    });
-    document.getElementById('cancelRegister').addEventListener('click', () => {
-      registerSection.classList.add('hidden');
-      welcome.classList.remove('hidden');
-    });
-    // Placeholder: Handle registration submission
-    document.getElementById('register-form').addEventListener('submit', e => {
-      e.preventDefault();
-      alert('Formulario de registro enviado');
-      // Aquí podrías integrar la lógica de Firebase para crear el usuario...
-    });
-    document.getElementById('btnLogin').addEventListener('click', () => {
-      alert('Mostrar formulario de inicio de sesión');
-      // Aquí mostrarías tu modal o sección de login...
-    });
-  </script>
+<body>
+  <div id="app-root" class="min-h-screen flex items-center justify-center">
+    <p class="text-lg text-animalium-green">Cargando aplicación...</p>
+  </div>
 </body>
 </html>
