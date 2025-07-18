@@ -2,79 +2,94 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Animalium - Clínica Veterinaria</title>
-  <link rel="search" type="application/opensearchdescription+xml" href="opensearch.xml" title="Buscar Animalium">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.tailwindcss.com">
+  <link rel="icon" href="logo-animalium.png">
+  <link rel="search" type="application/opensearchdescription+xml" href="opensearch.xml" title="Animalium">
 </head>
-<body class="antialiased bg-gray-100">
-  <div class="container mx-auto p-4 max-w-lg">
-    <img src="logo-animalium.png" alt="Animalium Logo" class="mx-auto mb-4 h-24">
-    <h1 class="text-center text-2xl font-bold text-animalium-green mb-4">Registro de Usuario</h1>
-    <form id="register-form" class="bg-white p-4 rounded shadow space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Nombre</label>
-        <input type="text" id="first-name" required class="mt-1 block w-full rounded border-gray-300"/>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Apellido</label>
-        <input type="text" id="last-name" required class="mt-1 block w-full rounded border-gray-300"/>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Dirección</label>
-        <input type="text" id="address" required class="mt-1 block w-full rounded border-gray-300"/>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Teléfono</label>
-        <input type="tel" id="phone" required class="mt-1 block w-full rounded border-gray-300"/>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Correo electrónico</label>
-        <input type="email" id="email" required class="mt-1 block w-full rounded border-gray-300"/>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Contraseña</label>
-        <input type="password" id="password" required class="mt-1 block w-full rounded border-gray-300"/>
-      </div>
-      <button type="submit" class="w-full py-2 bg-animalium-green text-white rounded">Registrarse</button>
-    </form>
+<body class="bg-gray-100 text-gray-800">
+  <div class="container mx-auto p-4">
+    <header class="text-center mb-8">
+      <img src="logo-animalium.png" alt="Animalium Logo" class="mx-auto h-24">
+      <h1 class="text-3xl font-bold text-animalium-green">Animalium</h1>
+      <p>Clínica Veterinaria para pequeñas especies</p>
+    </header>
 
-    <h2 class="text-center text-xl font-semibold text-animalium-green mt-8 mb-4">Agendar Cita</h2>
-    <div class="bg-white p-4 rounded shadow space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Fecha</label>
-        <input type="date" id="appointment-date" class="mt-1 block w-full rounded border-gray-300"/>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Hora</label>
-        <select id="time-slot" class="mt-1 block w-full rounded border-gray-300">
-          <option value="9:00">9:00</option>
+    <!-- Registro de Usuario -->
+    <section id="register" class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Registro de Usuario</h2>
+      <form id="register-form" class="grid grid-cols-1 gap-4 max-w-md mx-auto">
+        <input type="text" id="nombre" placeholder="Nombre" class="p-2 border rounded" />
+        <input type="text" id="apellido" placeholder="Apellido" class="p-2 border rounded" />
+        <input type="text" id="direccion" placeholder="Dirección" class="p-2 border rounded" />
+        <input type="tel" id="telefono" placeholder="Teléfono" class="p-2 border rounded" />
+        <input type="email" id="email" placeholder="Correo electrónico" class="p-2 border rounded" />
+        <input type="password" id="password" placeholder="Contraseña" class="p-2 border rounded" />
+        <button type="submit" class="bg-animalium-green text-white px-4 py-2 rounded">Registrarse</button>
+      </form>
+    </section>
+
+    <!-- Agendar Cita -->
+    <section id="appointment">
+      <h2 class="text-xl font-semibold mb-4">Agendar Cita</h2>
+      <form id="appointment-form" class="grid grid-cols-1 gap-4 max-w-md mx-auto">
+        <input type="date" id="fecha" class="p-2 border rounded" />
+        <select id="hora" class="p-2 border rounded">
+          <option value="">Selecciona hora</option>
+          <option value="09:00">09:00</option>
           <option value="10:00">10:00</option>
           <option value="11:00">11:00</option>
           <option value="12:00">12:00</option>
           <option value="13:00">13:00</option>
+          <option value="14:00">14:00</option>
+          <option value="15:00">15:00</option>
+          <option value="16:00">16:00</option>
+          <option value="17:00">17:00</option>
         </select>
-      </div>
-      <button id="book-btn" class="w-full py-2 bg-animalium-green text-white rounded">Agendar Cita</button>
-    </div>
+        <button type="submit" class="bg-animalium-green text-white px-4 py-2 rounded">Agendar</button>
+      </form>
+      <div id="agenda-list" class="max-w-md mx-auto mt-4"></div>
+    </section>
   </div>
 
   <script>
-    // Simple slot booking using localStorage
-    document.getElementById('book-btn').onclick = () => {
-      const date = document.getElementById('appointment-date').value;
-      const time = document.getElementById('time-slot').value;
-      if (!date) return alert('Selecciona una fecha');
-      let bookings = JSON.parse(localStorage.getItem('bookings')||'{}');
-      bookings[date] = bookings[date]||[];
-      if (bookings[date].includes(time)) {
-        alert('Hora no disponible');
-      } else {
-        bookings[date].push(time);
-        localStorage.setItem('bookings', JSON.stringify(bookings));
-        alert('Cita agendada: '+date+' '+time);
-      }
-    };
+    // Manejo de citas en localStorage
+    const form = document.getElementById('appointment-form');
+    const list = document.getElementById('agenda-list');
+
+    function loadAgenda(){
+      const citas = JSON.parse(localStorage.getItem('citas') || '[]');
+      const fechaInput = document.getElementById('fecha').value;
+      const horaSelect = document.getElementById('hora');
+      // Mostrar lista
+      list.innerHTML = citas.length
+        ? '<h3 class="font-semibold">Citas agendadas:</h3>' + citas.map(c => '<p>' + c.fecha + ' ' + c.hora + '</p>').join('')
+        : '<p>No hay citas agendadas.</p>';
+      // Deshabilitar horas ocupadas
+      horaSelect.querySelectorAll('option').forEach(opt => opt.disabled = false);
+      citas.filter(c => c.fecha === fechaInput).forEach(c => {
+        const opt = horaSelect.querySelector('option[value="'+c.hora+'"]');
+        if(opt) opt.disabled = true;
+      });
+    }
+
+    document.getElementById('fecha').addEventListener('change', loadAgenda);
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const fecha = document.getElementById('fecha').value;
+      const hora = document.getElementById('hora').value;
+      if(!fecha || !hora) return alert('Selecciona fecha y hora');
+      let citas = JSON.parse(localStorage.getItem('citas') || '[]');
+      if(citas.find(c => c.fecha === fecha && c.hora === hora)) return alert('Horario no disponible');
+      citas.push({ fecha, hora });
+      localStorage.setItem('citas', JSON.stringify(citas));
+      loadAgenda();
+    });
+
+    // Cargar al inicio
+    loadAgenda();
   </script>
 </body>
 </html>
