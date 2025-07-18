@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
   <ShortName>Animalium</ShortName>
-  <Description>Buscar en Animalium</Description>
+  <Description>Buscar en Animalium Clínica Veterinaria</Description>
+  <Url type="text/html" template="https://animalium.mx/?q={searchTerms}"/>
   <InputEncoding>UTF-8</InputEncoding>
-  <Image height="16" width="16" type="image/png">https://animalium.mx/logo-animalium.png</Image>
-  <Url type="text/html" template="https://animalium.mx/?s={searchTerms}" method="get"/>
+  <Image height="16" width="16" type="image/png">logo-animalium.png</Image>
 </OpenSearchDescription>
