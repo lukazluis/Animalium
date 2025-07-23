@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -30,6 +29,36 @@
       }
     });
 
+    function renderLogin() {
+      document.getElementById("app-root").innerHTML = `
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+          <img src="logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <h1 class="text-3xl font-bold text-animalium-green mb-6">Animalium - Iniciar Sesión</h1>
+          <input id="email" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs" />
+          <input id="password" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs" />
+          <div class="flex gap-4 mb-4">
+            <button onclick="loginWithEmail()" class="px-4 py-2 bg-animalium-green text-white rounded">Entrar</button>
+            <button onclick="renderRegister()" class="px-4 py-2 bg-animalium-brown text-white rounded">Registrarse</button>
+          </div>
+        </div>`;
+    }
+
+    function renderRegister() {
+      document.getElementById("app-root").innerHTML = `
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+          <img src="logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <h1 class="text-3xl font-bold text-animalium-green mb-6">Registro Animalium</h1>
+          <input id="name" type="text" placeholder="Nombre" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="surname" type="text" placeholder="Apellido" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="phone" type="text" placeholder="Teléfono" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="address" type="text" placeholder="Dirección" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="emailReg" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="passwordReg" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs"/>
+          <button onclick="registerWithSurvey()" class="px-4 py-2 bg-animalium-green text-white rounded mb-4">Registrarse</button>
+          <p><a href="#" onclick="renderLogin()" class="text-animalium-green underline">Volver a Iniciar Sesión</a></p>
+        </div>`;
+    }
+
     async function loginWithEmail() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
@@ -40,32 +69,21 @@
       }
     }
 
-    async function registerWithEmail() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+    async function registerWithSurvey() {
+      const name = document.getElementById('name').value;
+      const surname = document.getElementById('surname').value;
+      const phone = document.getElementById('phone').value;
+      const address = document.getElementById('address').value;
+      const email = document.getElementById('emailReg').value;
+      const password = document.getElementById('passwordReg').value;
       try {
-        await auth.createUserWithEmailAndPassword(email, password);
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection('users').doc(result.user.uid).set({
+          name, surname, phone, address, email
+        });
       } catch (err) {
         alert('Error al registrarse: ' + err.message);
       }
-    }
-
-    function logout() {
-      auth.signOut();
-    }
-
-    function renderLogin() {
-      document.getElementById("app-root").innerHTML = `
-        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
-          <h1 class="text-3xl font-bold text-animalium-green mb-6">Animalium - Iniciar Sesión</h1>
-          <input id="email" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs" />
-          <input id="password" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs" />
-          <div class="flex gap-4">
-            <button onclick="loginWithEmail()" class="px-4 py-2 bg-animalium-green text-white rounded">Entrar</button>
-            <button onclick="registerWithEmail()" class="px-4 py-2 bg-animalium-brown text-white rounded">Registrarse</button>
-          </div>
-        </div>
-      `;
     }
 
     function renderDashboard(user) {
@@ -75,9 +93,12 @@
           <button onclick="logout()" class="mt-2 px-4 py-2 bg-red-500 text-white rounded">Cerrar sesión</button>
         </header>
         <main class="p-6 text-center">
-          <h2 class="text-xl font-semibold mb-4">Aquí irá tu panel de citas 🐾</h2>
-        </main>
-      `;
+          <h2 class="text-xl font-semibold mb-6">Aquí irá tu panel de citas 🐾</h2>
+        </main>`;
+    }
+
+    function logout() {
+      auth.signOut();
     }
   </script>
   <style>
@@ -89,7 +110,7 @@
 </head>
 <body>
   <div id="app-root" class="min-h-screen flex items-center justify-center">
-    <p class="text-lg text-animalium-green">Cargando aplicación real...</p>
+    <p class="text-lg text-animalium-green">Cargando aplicación...</p>
   </div>
 </body>
 </html>
