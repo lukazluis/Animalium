@@ -52,6 +52,7 @@
   </footer>
 
   <script>
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
       authDomain: "animalium-22e17.firebaseapp.com",
@@ -72,13 +73,13 @@
 
     function renderLogin() {
       document.getElementById('logoutBtn').classList.add('hidden');
-      document.getElementById('app-root').innerHTML = `
+      document.getElementById('app-root').innerHTML = \`
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
           <h2 class="text-2xl font-semibold text-animalium-green mb-6">Iniciar Sesión</h2>
           <input id="email" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
           <input id="password" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
           <button onclick="loginWithEmail()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Entrar</button>
-        </div>`;
+        </div>\`;
     }
 
     async function loginWithEmail() {
@@ -94,7 +95,7 @@
     function renderDashboard(user) {
       document.getElementById('logoutBtn').classList.remove('hidden');
       document.getElementById('logoutBtn').onclick = () => auth.signOut();
-      document.getElementById('app-root').innerHTML = `
+      document.getElementById('app-root').innerHTML = \`
         <section class="max-w-xl mx-auto bg-white rounded-lg shadow p-6 mb-6">
           <h2 class="text-xl font-semibold text-animalium-green mb-4">Tus Mascotas</h2>
           <div id="petList" class="space-y-4"></div>
@@ -103,7 +104,7 @@
         <section class="max-w-xl mx-auto bg-white rounded-lg shadow p-6">
           <h2 class="text-xl font-semibold text-animalium-green mb-4">Tus Citas</h2>
           <ul id="appointmentList" class="list-disc pl-5"></ul>
-        </section>`;
+        </section>\`;
       loadPets(user.uid);
       loadAppointments(user.uid);
     }
@@ -114,32 +115,32 @@
       const snapshot = await db.collection('pets').where('owner','==',uid).get();
       snapshot.forEach(doc => {
         const p = doc.data();
-        // compute next due date: add one year
+        // calculate next due date
         const nextDates = p.vaccinesWithDates.map(v => {
           const d = new Date(v.date);
           d.setFullYear(d.getFullYear()+1);
           return { name: v.name, last: v.date, next: d.toISOString().split('T')[0] };
         });
-        petList.innerHTML += `
+        petList.innerHTML += \`
           <div class="bg-white rounded-lg shadow p-4">
             <div class="flex items-center gap-4">
-              ${p.photoURL ? `<img src="${p.photoURL}" class="h-16 w-16 rounded-full object-cover"/>` : `<div class="h-16 w-16 bg-gray-200 rounded-full"></div>`}
+              \${p.photoURL ? `<img src="\${p.photoURL}" class="h-16 w-16 rounded-full object-cover"/>` : `<div class="h-16 w-16 bg-gray-200 rounded-full"></div>`}
               <div class="text-left">
-                <p class="font-semibold text-lg">${p.name} (${p.age || '–'} años${p.sterilized ? ', esterilizado' : ''})</p>
-                <p class="text-sm text-gray-600">Raza: ${p.breed || '–'}</p>
-                ${p.allergies ? `<p class="text-sm text-red-500">Alergias: ${p.allergies}</p>` : ''}
+                <p class="font-semibold text-lg">\${p.name} (\${p.age || '–'} años\${p.sterilized ? ', esterilizado' : ''})</p>
+                <p class="text-sm text-gray-600">Raza: \${p.breed || '–'}</p>
+                \${p.allergies ? `<p class="text-sm text-red-500">Alergias: \${p.allergies}</p>` : ''}
               </div>
             </div>
             <div class="mt-4 text-sm">
               <p class="font-semibold">Vacunas:</p>
-              ${nextDates.map(v=>`<p>${v.name}: última ${v.last}, próxima ${v.next}</p>`).join('')}
+              \${nextDates.map(v=>`<p>\${v.name}: última \${v.last}, próxima \${v.next}</p>`).join('')}
             </div>
-          </div>`;
+          </div>\`;
       });
     }
 
     function showAddPet() {
-      document.body.insertAdjacentHTML('beforeend', `
+      document.body.insertAdjacentHTML('beforeend', \`
         <div id="petModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div class="bg-white rounded-lg p-6 w-80 space-y-4 overflow-auto max-h-full">
             <h3 class="text-lg font-semibold">Agregar Mascota</h3>
@@ -149,13 +150,13 @@
             <label class="flex items-center gap-2"><input id="petSterilized" type="checkbox"/> Esterilizado(a)</label>
             <p class="font-semibold text-left">Vacunas con fecha:</p>
             <div class="space-y-2 text-left">
-              ${['Rabia','Parvovirus','Moquillo','Hepatitis','Leptospirosis'].map(name=>`
+              \${['Rabia','Parvovirus','Moquillo','Hepatitis','Leptospirosis'].map(name=>\`
                 <div class="flex items-center gap-2">
-                  <input type="checkbox" class="petVaccine" value="${name}"/>
-                  <label>${name}</label>
-                  <input type="date" class="vetDate"/>
+                  <input type="checkbox" class="petVaccine" value="\${name}"/>
+                  <label>\${name}</label>
+                  <input type="date" class="vetDate flex-1"/>
                 </div>
-              `).join('')}
+              \`).join('')}
             </div>
             <textarea id="petAllergies" placeholder="Alergias (opcional)" class="w-full px-4 py-2 border rounded"></textarea>
             <input id="petPhoto" type="file" accept="image/*" class="w-full"/>
@@ -164,7 +165,7 @@
               <button onclick="closePetModal()" class="bg-gray-300 px-4 py-2 rounded">Cancelar</button>
             </div>
           </div>
-        </div>`);
+        </div>\`);
     }
 
     function closePetModal() {
@@ -173,27 +174,35 @@
     }
 
     async function addPet() {
-      const name = document.getElementById('petName').value;
-      const breed = document.getElementById('petBreed').value;
-      const age = parseInt(document.getElementById('petAge').value) || null;
-      const sterilized = document.getElementById('petSterilized').checked;
-      const allergies = document.getElementById('petAllergies').value.trim();
-      const files = document.getElementById('petPhoto').files;
-      let photoURL = '';
-      if(files[0]) {
-        const ref = storage.ref().child(`pets/${auth.currentUser.uid}/${files[0].name}`);
-        await ref.put(files[0]);
-        photoURL = await ref.getDownloadURL();
+      try {
+        const name = document.getElementById('petName').value;
+        const breed = document.getElementById('petBreed').value;
+        const age = parseInt(document.getElementById('petAge').value) || null;
+        const sterilized = document.getElementById('petSterilized').checked;
+        const allergies = document.getElementById('petAllergies').value.trim();
+        const file = document.getElementById('petPhoto').files[0];
+        let photoURL = '';
+        if (file) {
+          const ref = storage.ref().child(\`pets/${auth.currentUser.uid}/${file.name}\`);
+          await ref.put(file);
+          photoURL = await ref.getDownloadURL();
+        }
+        // collect vaccines with dates
+        const vaccineCheckboxes = document.querySelectorAll('.petVaccine');
+        const dateInputs = document.querySelectorAll('.vetDate');
+        const vaccinesWithDates = [];
+        vaccineCheckboxes.forEach((cb, i) => {
+          const date = dateInputs[i].value;
+          if (cb.checked && date) vaccinesWithDates.push({ name: cb.value, date });
+        });
+        await db.collection('pets').add({ owner: auth.currentUser.uid, name, breed, age, sterilized, allergies, vaccinesWithDates, photoURL });
+        alert('Mascota guardada exitosamente');
+        closePetModal();
+        loadPets(auth.currentUser.uid);
+      } catch (err) {
+        console.error(err);
+        alert('Error al guardar mascota: ' + err.message);
       }
-      // collect vaccines with dates
-      const vaccinesWithDates = Array.from(document.querySelectorAll('.petVaccine')).reduce((arr, cb, i) => {
-        const date = document.querySelectorAll('.vetDate')[i].value;
-        if(cb.checked && date) arr.push({ name: cb.value, date });
-        return arr;
-      }, []);
-      await db.collection('pets').add({ owner: auth.currentUser.uid, name, breed, age, sterilized, allergies, vaccinesWithDates, photoURL });
-      closePetModal();
-      loadPets(auth.currentUser.uid);
     }
 
     function loadAppointments(uid) {
