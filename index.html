@@ -5,251 +5,156 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Animalium - Clínica Veterinaria 🐾</title>
   <script src="https://cdn.tailwindcss.com">
-    
     function renderRegister() {
       document.getElementById('logoutBtn').classList.add('hidden');
       document.getElementById('app-root').innerHTML = `
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
           <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
-          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPhone" type="tel" placeholder="Teléfono de emergencia" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass2" type="password" placeholder="Verificar contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
-          <div class="g-recaptcha mb-4" data-sitekey="YOUR_SITE_KEY"></div>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
           <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
           <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
         </div>`;
     }
 
-    
-    async function registerClient() {
+        async function registerClient() {
       try {
         const name = document.getElementById('regName').value.trim();
         const phone = document.getElementById('regPhone').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPass').value;
         const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) {
-          alert('Por favor completa todos los campos.');
-          return;
-        }
-        if (password !== password2) {
-          alert('Las contraseñas no coinciden.');
-          return;
-        }
-        const recaptchaResponse = grecaptcha.getResponse();
-        if (!recaptchaResponse) {
-          alert('Por favor verifica el reCAPTCHA.');
-          return;
-        }
+        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
+        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
         await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-        renderLogin();
-      } catch (err) {
-        alert('Error al registrarse: ' + err.message);
-      }
+        alert('Registro exitoso.'); renderLogin();
+      } catch (err) { alert('Error: ' + err.message); }
     }
     }
 
 </script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
-    
     function renderRegister() {
       document.getElementById('logoutBtn').classList.add('hidden');
       document.getElementById('app-root').innerHTML = `
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
           <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
-          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPhone" type="tel" placeholder="Teléfono de emergencia" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass2" type="password" placeholder="Verificar contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
-          <div class="g-recaptcha mb-4" data-sitekey="YOUR_SITE_KEY"></div>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
           <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
           <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
         </div>`;
     }
 
-    
-    async function registerClient() {
+        async function registerClient() {
       try {
         const name = document.getElementById('regName').value.trim();
         const phone = document.getElementById('regPhone').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPass').value;
         const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) {
-          alert('Por favor completa todos los campos.');
-          return;
-        }
-        if (password !== password2) {
-          alert('Las contraseñas no coinciden.');
-          return;
-        }
-        const recaptchaResponse = grecaptcha.getResponse();
-        if (!recaptchaResponse) {
-          alert('Por favor verifica el reCAPTCHA.');
-          return;
-        }
+        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
+        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
         await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-        renderLogin();
-      } catch (err) {
-        alert('Error al registrarse: ' + err.message);
-      }
+        alert('Registro exitoso.'); renderLogin();
+      } catch (err) { alert('Error: ' + err.message); }
     }
     }
 
 </script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
-    
     function renderRegister() {
       document.getElementById('logoutBtn').classList.add('hidden');
       document.getElementById('app-root').innerHTML = `
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
           <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
-          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPhone" type="tel" placeholder="Teléfono de emergencia" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass2" type="password" placeholder="Verificar contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
-          <div class="g-recaptcha mb-4" data-sitekey="YOUR_SITE_KEY"></div>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
           <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
           <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
         </div>`;
     }
 
-    
-    async function registerClient() {
+        async function registerClient() {
       try {
         const name = document.getElementById('regName').value.trim();
         const phone = document.getElementById('regPhone').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPass').value;
         const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) {
-          alert('Por favor completa todos los campos.');
-          return;
-        }
-        if (password !== password2) {
-          alert('Las contraseñas no coinciden.');
-          return;
-        }
-        const recaptchaResponse = grecaptcha.getResponse();
-        if (!recaptchaResponse) {
-          alert('Por favor verifica el reCAPTCHA.');
-          return;
-        }
+        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
+        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
         await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-        renderLogin();
-      } catch (err) {
-        alert('Error al registrarse: ' + err.message);
-      }
+        alert('Registro exitoso.'); renderLogin();
+      } catch (err) { alert('Error: ' + err.message); }
     }
     }
 
 </script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js">
-    
     function renderRegister() {
       document.getElementById('logoutBtn').classList.add('hidden');
       document.getElementById('app-root').innerHTML = `
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
           <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
-          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPhone" type="tel" placeholder="Teléfono de emergencia" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass2" type="password" placeholder="Verificar contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
-          <div class="g-recaptcha mb-4" data-sitekey="YOUR_SITE_KEY"></div>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
           <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
           <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
         </div>`;
     }
 
-    
-    async function registerClient() {
+        async function registerClient() {
       try {
         const name = document.getElementById('regName').value.trim();
         const phone = document.getElementById('regPhone').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPass').value;
         const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) {
-          alert('Por favor completa todos los campos.');
-          return;
-        }
-        if (password !== password2) {
-          alert('Las contraseñas no coinciden.');
-          return;
-        }
-        const recaptchaResponse = grecaptcha.getResponse();
-        if (!recaptchaResponse) {
-          alert('Por favor verifica el reCAPTCHA.');
-          return;
-        }
+        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
+        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
         await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-        renderLogin();
-      } catch (err) {
-        alert('Error al registrarse: ' + err.message);
-      }
+        alert('Registro exitoso.'); renderLogin();
+      } catch (err) { alert('Error: ' + err.message); }
     }
     }
 
 </script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js">
-    
     function renderRegister() {
       document.getElementById('logoutBtn').classList.add('hidden');
       document.getElementById('app-root').innerHTML = `
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
           <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
-          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPhone" type="tel" placeholder="Teléfono de emergencia" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass2" type="password" placeholder="Verificar contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
-          <div class="g-recaptcha mb-4" data-sitekey="YOUR_SITE_KEY"></div>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
           <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
           <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
         </div>`;
     }
 
-    
-    async function registerClient() {
+        async function registerClient() {
       try {
         const name = document.getElementById('regName').value.trim();
         const phone = document.getElementById('regPhone').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPass').value;
         const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) {
-          alert('Por favor completa todos los campos.');
-          return;
-        }
-        if (password !== password2) {
-          alert('Las contraseñas no coinciden.');
-          return;
-        }
-        const recaptchaResponse = grecaptcha.getResponse();
-        if (!recaptchaResponse) {
-          alert('Por favor verifica el reCAPTCHA.');
-          return;
-        }
+        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
+        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
         await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-        renderLogin();
-      } catch (err) {
-        alert('Error al registrarse: ' + err.message);
-      }
+        alert('Registro exitoso.'); renderLogin();
+      } catch (err) { alert('Error: ' + err.message); }
     }
     }
 
@@ -260,7 +165,6 @@
     .bg-animalium-brown { background-color: #CDB79F; }
     body { font-family: system-ui, sans-serif; margin: 0; background-color: #F7F7F7; }
   </style>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
   <header class="bg-white shadow fixed w-full z-10">
@@ -456,51 +360,32 @@
         });
     }
   
-    
     function renderRegister() {
       document.getElementById('logoutBtn').classList.add('hidden');
       document.getElementById('app-root').innerHTML = `
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
           <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
-          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPhone" type="tel" placeholder="Teléfono de emergencia" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-2"/>
-          <input id="regPass2" type="password" placeholder="Verificar contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
-          <div class="g-recaptcha mb-4" data-sitekey="YOUR_SITE_KEY"></div>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
           <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
           <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
         </div>`;
     }
 
-    
-    async function registerClient() {
+        async function registerClient() {
       try {
         const name = document.getElementById('regName').value.trim();
         const phone = document.getElementById('regPhone').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPass').value;
         const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) {
-          alert('Por favor completa todos los campos.');
-          return;
-        }
-        if (password !== password2) {
-          alert('Las contraseñas no coinciden.');
-          return;
-        }
-        const recaptchaResponse = grecaptcha.getResponse();
-        if (!recaptchaResponse) {
-          alert('Por favor verifica el reCAPTCHA.');
-          return;
-        }
+        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
+        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
         await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-        renderLogin();
-      } catch (err) {
-        alert('Error al registrarse: ' + err.message);
-      }
+        alert('Registro exitoso.'); renderLogin();
+      } catch (err) { alert('Error: ' + err.message); }
     }
     }
 
