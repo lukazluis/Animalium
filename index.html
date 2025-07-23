@@ -4,200 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Animalium - Clínica Veterinaria 🐾</title>
-  <link rel="icon" href="logo-animalium.png" type="image/png"/>
-  <link rel="search" type="application/opensearchdescription+xml" href="opensearch.xml" title="Animalium"/>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-</head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-  <div id="app-root" class="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden"></div>
-
-  <script>
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
-      authDomain: "animalium-22e17.firebaseapp.com",
-      projectId: "animalium-22e17",
-      storageBucket: "animalium-22e17.appspot.com",
-      messagingSenderId: "800956760641",
-      appId: "1:800956760641:web:dab9057b718e240ec8bcc0"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    auth.onAuthStateChanged(user => user ? renderDashboard(user) : renderLogin());
-
-    function renderLogin() {
-      document.getElementById('app-root').innerHTML = \`
-        <div class="p-6 flex flex-col items-center">
-          <img src="logo-animalium.png" alt="Logo" class="h-16 mb-4"/>
-          <h1 class="text-2xl font-bold text-animalium-green mb-4">Iniciar Sesión</h1>
-          <input id="login-email" type="email" placeholder="Correo electrónico" class="w-full p-2 mb-2 border rounded"/>
-          <input id="login-pass" type="password" placeholder="Contraseña" class="w-full p-2 mb-4 border rounded"/>
-          <button onclick="login()" class="w-full bg-animalium-green text-white p-2 rounded mb-2">Entrar</button>
-          <a href="#" onclick="renderReset()" class="text-sm text-animalium-green underline mb-4">¿Olvidaste tu contraseña?</a>
-          <button onclick="renderRegister()" class="w-full bg-animalium-brown text-white p-2 rounded">Registrarse</button>
-        </div>\`;
-    }
-
-    function renderReset() {
-      document.getElementById('app-root').innerHTML = \`
-        <div class="p-6 flex flex-col items-center">
-          <h1 class="text-2xl font-bold text-animalium-green mb-4">Restablecer Contraseña</h1>
-          <input id="reset-email" type="email" placeholder="Correo electrónico" class="w-full p-2 mb-4 border rounded"/>
-          <button onclick="resetPassword()" class="w-full bg-animalium-green text-white p-2 rounded mb-2">Enviar enlace</button>
-          <a href="#" onclick="renderLogin()" class="text-sm text-animalium-green underline">Volver</a>
-        </div>\`;
-    }
-
-    async function resetPassword() {
-      const email = document.getElementById('reset-email').value;
-      try {
-        await auth.sendPasswordResetEmail(email);
-        alert('Enlace enviado a ' + email);
-        renderLogin();
-      } catch (e) {
-        alert(e.message);
-      }
-    }
-
-    function renderRegister() {
-      document.getElementById('app-root').innerHTML = \`
-        <div class="p-6 flex flex-col items-center space-y-2">
-          <img src="logo-animalium.png" alt="Logo" class="h-16 mb-2"/>
-          <h1 class="text-2xl font-bold text-animalium-green">Registro</h1>
-          <input id="reg-name" type="text" placeholder="Nombre" class="w-full p-2 border rounded"/>
-          <input id="reg-surname" type="text" placeholder="Apellido" class="w-full p-2 border rounded"/>
-          <input id="reg-phone" type="text" placeholder="Teléfono" class="w-full p-2 border rounded"/>
-          <input id="reg-address" type="text" placeholder="Dirección" class="w-full p-2 border rounded"/>
-          <input id="reg-email" type="email" placeholder="Correo electrónico" class="w-full p-2 border rounded"/>
-          <input id="reg-pass" type="password" placeholder="Contraseña" class="w-full p-2 border rounded"/>
-          <button onclick="registerUser()" class="w-full bg-animalium-green text-white p-2 rounded">Crear Cuenta</button>
-          <a href="#" onclick="renderLogin()" class="text-sm text-animalium-green underline">Volver a Iniciar</a>
-        </div>\`;
-    }
-
-    async function login() {
-      const email = document.getElementById('login-email').value;
-      const pass = document.getElementById('login-pass').value;
-      try {
-        await auth.signInWithEmailAndPassword(email, pass);
-      } catch (e) {
-        alert(e.message);
-      }
-    }
-
-    async function registerUser() {
-      const name = document.getElementById('reg-name').value;
-      const surname = document.getElementById('reg-surname').value;
-      const phone = document.getElementById('reg-phone').value;
-      const address = document.getElementById('reg-address').value;
-      const email = document.getElementById('reg-email').value;
-      const pass = document.getElementById('reg-pass').value;
-      try {
-        const res = await auth.createUserWithEmailAndPassword(email, pass);
-        await db.collection('users').doc(res.user.uid).set({ name, surname, phone, address, email });
-      } catch (e) {
-        alert(e.message);
-      }
-    }
-
-    function renderDashboard(user) {
-      document.getElementById('app-root').innerHTML = \`
-        <div class="p-6">
-          <header class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-animalium-green">Bienvenido, \${user.email}</h2>
-            <button onclick="logout()" class="bg-red-500 text-white px-3 py-1 rounded">Salir</button>
-          </header>
-          <section class="mb-6">
-            <h3 class="font-medium mb-2">Agendar Cita</h3>
-            <input id="appointmentDate" type="date" class="w-full p-2 mb-2 border rounded"/>
-            <select id="appointmentTime" class="w-full p-2 mb-2 border rounded"></select>
-            <button onclick="bookAppointment()" class="w-full bg-animalium-green text-white p-2 rounded">Reservar</button>
-          </section>
-          <section>
-            <h3 class="font-medium mb-2">Mis Citas</h3>
-            <ul id="appointmentList" class="list-disc pl-5"></ul>
-          </section>
-        </div>\`;
-      setupAppointments(user.uid);
-    }
-
-    async function setupAppointments(uid) {
-      const dateInput = document.getElementById('appointmentDate');
-      const timeSelect = document.getElementById('appointmentTime');
-      dateInput.value = new Date().toISOString().split('T')[0];
-      dateInput.addEventListener('change', () => populateSlots(dateInput.value));
-      await populateSlots(dateInput.value);
-      db.collection('appointments').where('userId','==',uid)
-        .onSnapshot(snap => {
-          const list = document.getElementById('appointmentList');
-          list.innerHTML = '';
-          snap.docs.forEach(doc => {
-            const { date, time } = doc.data();
-            const li = document.createElement('li');
-            li.textContent = date + ' ' + time;
-            list.appendChild(li);
-          });
-        });
-    }
-
-    async function populateSlots(date) {
-      const timeSelect = document.getElementById('appointmentTime');
-      timeSelect.innerHTML = '';
-      const d = new Date(date);
-      if (d.getDay() === 0) {
-        const opt = document.createElement('option');
-        opt.textContent = 'Domingo no disponible';
-        opt.disabled = true;
-        timeSelect.appendChild(opt);
-        return;
-      }
-      const slots = [];
-      if (d.getDay() === 6) {
-        for (let h = 10; h < 14; h++) slots.push(\`\${h}:00\`);
-      } else {
-        for (let h = 9; h < 18; h++) slots.push(\`\${h}:00\`);
-      }
-      // fetch booked
-      const bookedSnap = await db.collection('appointments').where('date','==',date).get();
-      const booked = bookedSnap.docs.map(d=>d.data().time);
-      slots.forEach(time => {
-        const opt = document.createElement('option');
-        opt.value = time;
-        opt.textContent = booked.includes(time) ? time + ' (ocupado)' : time;
-        if (booked.includes(time)) opt.disabled = true;
-        timeSelect.appendChild(opt);
-      });
-    }
-
-    async function bookAppointment() {
-      const date = document.getElementById('appointmentDate').value;
-      const time = document.getElementById('appointmentTime').value;
-      if (!time || time.includes('(ocupado)')) {
-        return alert('Selecciona un horario válido');
-      }
-      try {
-        await db.collection('appointments').add({ userId: auth.currentUser.uid, date, time });
-        alert('Cita reservada');
-        await populateSlots(date);
-      } catch (e) {
-        alert(e.message);
-      }
-    }
-
-    function logout() {
-      auth.signOut();
-    }
-  </script>
   <style>
-    .text-animalium-green { color: #5F7C7D; }
-    .bg-animalium-green { background-color: #5F7C7D; }
-    .bg-animalium-brown { background-color: #CDB79F; }
-    body { margin: 0; font-family: system-ui, sans-serif; }
+    body {
+      font-family: system-ui, sans-serif;
+      background-color: #f9f9f9;
+    }
+    .text-animalium-green {
+      color: #5F7C7D;
+    }
+    .bg-animalium-green {
+      background-color: #5F7C7D;
+    }
   </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen py-6 px-4">
+  <header class="w-full text-center mb-6">
+    <img src="logo-animalium.png" alt="Animalium Logo" class="mx-auto h-28 mb-2" />
+    <h1 class="text-3xl font-bold text-animalium-green">Animalium</h1>
+    <p class="text-sm text-gray-600">Clínica Veterinaria para pequeñas especies</p>
+  </header>
+  <main class="text-center">
+    <h2 class="text-xl font-semibold mb-2">¡Bienvenido a Animalium!</h2>
+    <p class="mb-4">Tu sitio web está funcionando correctamente con Firebase. 🐾</p>
+    <button class="px-6 py-2 bg-animalium-green text-white rounded-full">Agendar Cita</button>
+  </main>
 </body>
 </html>
