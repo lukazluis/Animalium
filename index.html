@@ -13,7 +13,6 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header class="bg-white shadow fixed w-full z-10">
     <div class="container mx-auto px-4 py-4 flex items-center">
       <img src="logo-animalium.png" alt="Animalium Logo" class="h-10"/>
@@ -22,10 +21,8 @@
     </div>
   </header>
 
-  <!-- Main -->
   <main id="app-root" class="pt-20 container mx-auto px-4 py-8"></main>
 
-  <!-- Footer -->
   <footer class="bg-white py-6 mt-8">
     <div class="container mx-auto px-4 text-center space-y-2">
       <a href="https://wa.me/524423963079" class="text-animalium-green">WhatsApp</a> |
@@ -34,17 +31,20 @@
     </div>
   </footer>
 
-  <!-- Firebase -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <script>
-    // Config Firebase
+    // Configuración de Firebase del proyecto Animalium
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
+      apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
+      authDomain: "animalium-22e17.firebaseapp.com",
+      projectId: "animalium-22e17",
+      storageBucket: "animalium-22e17.appspot.com",
+      messagingSenderId: "800956760641",
+      appId: "1:800956760641:web:dab9057b718e240ec8bcc0"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -52,69 +52,68 @@
     const logoutBtn = document.getElementById('logoutBtn');
     const appRoot = document.getElementById('app-root');
 
-    // Convert file to Base64
+    // Convierte File a Base64
     function fileToBase64(file) {
-      return new Promise((res, rej) => {
+      return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => res(reader.result);
-        reader.onerror = rej;
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
         reader.readAsDataURL(file);
       });
     }
 
-    // Auth state
     auth.onAuthStateChanged(user => user ? renderDashboard(user) : renderLogin());
 
-    // --- AUTH FUNCTIONS ---
+    // Render Login
     function renderLogin() {
       logoutBtn.classList.add('hidden');
-      appRoot.innerHTML = `
+      appRoot.innerHTML = \`
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
           <h2 class="text-2xl text-animalium-green mb-4">Iniciar Sesión</h2>
           <input id="emailInput" type="email" placeholder="Correo electrónico" class="w-full mb-3 px-3 py-2 border rounded"/>
           <input id="passwordInput" type="password" placeholder="Contraseña" class="w-full mb-4 px-3 py-2 border rounded"/>
           <button onclick="login()" class="w-full bg-animalium-green text-white py-2 rounded">Entrar</button>
           <p class="mt-4"><a href='#' class="text-animalium-green" onclick="renderRegister()">Registrarse</a></p>
-        </div>`;
+        </div>\`;
     }
     async function login() {
       const email = document.getElementById('emailInput').value;
-      const password = document.getElementById('passwordInput').value;
+      const pass  = document.getElementById('passwordInput').value;
       try {
-        await auth.signInWithEmailAndPassword(email, password);
+        await auth.signInWithEmailAndPassword(email, pass);
       } catch(e) { alert(e.message); }
     }
+
+    // Render Register
     function renderRegister() {
       logoutBtn.classList.add('hidden');
-      appRoot.innerHTML = `
+      appRoot.innerHTML = \`
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
-          <h2 class="text-2xl text-animalium-green mb-4">Registro</h2>
-          <input id="regName" placeholder="Nombre" class="w-full mb-2 px-3 py-2 border rounded"/>
-          <input id="regPhone" placeholder="Teléfono" class="w-full mb-2 px-3 py-2 border rounded"/>
-          <input id="regEmail" type="email" placeholder="Correo" class="w-full mb-2 px-3 py-2 border rounded"/>
+          <h2 class="text-2xl text-animalium-green mb-4">Registro Cliente</h2>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full mb-2 px-3 py-2 border rounded"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full mb-2 px-3 py-2 border rounded"/>
           <input id="regPass" type="password" placeholder="Contraseña" class="w-full mb-4 px-3 py-2 border rounded"/>
-          <button onclick="register()" class="w-full bg-animalium-green text-white py-2 rounded">Crear Cuenta</button>
+          <button onclick="registerClient()" class="w-full bg-animalium-green text-white py-2 rounded">Crear Cuenta</button>
           <p class="mt-4"><a href='#' class="text-animalium-green" onclick="renderLogin()">Volver</a></p>
-        </div>`;
+        </div>\`;
     }
-    async function register() {
+    async function registerClient() {
       const name = document.getElementById('regName').value;
-      const phone = document.getElementById('regPhone').value;
-      const email = document.getElementById('regEmail').value;
+      const email= document.getElementById('regEmail').value;
       const pass = document.getElementById('regPass').value;
       try {
         const res = await auth.createUserWithEmailAndPassword(email, pass);
-        await db.collection('users').doc(res.user.uid).set({ name, phone, email });
+        await db.collection('users').doc(res.user.uid).set({ name, email });
         alert('Registro exitoso');
         renderLogin();
       } catch(e) { alert(e.message); }
     }
 
-    // --- DASHBOARD & PETS CRUD ---
+    // Dashboard
     function renderDashboard(user) {
       logoutBtn.classList.remove('hidden');
-      logoutBtn.addEventListener('click', () => auth.signOut());
-      appRoot.innerHTML = `
+      logoutBtn.onclick = () => auth.signOut();
+      appRoot.innerHTML = \`
         <div class="max-w-xl mx-auto">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl text-animalium-green">Tus Mascotas</h2>
@@ -123,69 +122,65 @@
           <div id="petList" class="space-y-4 mb-8"></div>
           <h2 class="text-xl text-animalium-green mb-2">Tus Citas</h2>
           <ul id="appointmentList" class="list-disc pl-5"></ul>
-        </div>`;
-      loadPets(user.uid);
-      loadAppointments(user.uid);
+        </div>\`;
+      loadPets(user.uid); loadAppointments(user.uid);
     }
 
     async function loadPets(uid) {
-      const list = document.getElementById('petList'); list.innerHTML='';
+      const list = document.getElementById('petList');
+      list.innerHTML = '';
       const snap = await db.collection('pets').where('owner','==',uid).get();
       snap.forEach(doc => {
         const p = doc.data();
-        list.innerHTML += `
+        list.innerHTML += \`
           <div class="bg-white p-4 rounded shadow flex items-center justify-between">
             <div class="flex items-center gap-4">
-              ${p.photoData ? `<img src="${p.photoData}" class="h-16 w-16 rounded-full"/>` : ''}
-              <div><b>${p.name}</b><br>${p.breed}</div>
+              \${p.photoData ? `<img src="\${p.photoData}" class="h-16 w-16 rounded-full"/>` : ''}
+              <div><b>\${p.name}</b><br>\${p.breed}</div>
             </div>
             <div class="flex gap-2">
-              <button onclick="editPet('${doc.id}')" class="px-2 py-1 bg-blue-500 text-white rounded">Editar</button>
-              <button onclick="deletePet('${doc.id}')" class="px-2 py-1 bg-red-500 text-white rounded">Eliminar</button>
+              <button onclick="showAddPet('\${doc.id}', p)" class="px-2 py-1 bg-blue-500 text-white rounded">Editar</button>
+              <button onclick="deletePet('\${doc.id}')" class="px-2 py-1 bg-red-500 text-white rounded">Eliminar</button>
             </div>
-          </div>`;
+          </div>\`;
       });
     }
 
     function showAddPet(id, data) {
       const isEdit = !!id;
       const name = data?.name||'', breed = data?.breed||'';
-      document.body.insertAdjacentHTML('beforeend', `
+      document.body.insertAdjacentHTML('beforeend', \`
         <div id="petModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div class="bg-white rounded-lg p-6 w-80 space-y-3">
-            <h3 class="text-lg text-animalium-green">${isEdit?'Editar':'Agregar'} Mascota</h3>
-            <input id="petName" placeholder="Nombre" value="${name}" class="w-full px-3 py-2 border rounded"/>
-            <input id="petBreed" placeholder="Raza" value="${breed}" class="w-full px-3 py-2 border rounded"/>
+            <h3 class="text-lg text-animalium-green">\${isEdit?'Editar':'Agregar'} Mascota</h3>
+            <input id="petName" placeholder="Nombre" value="\${name}" class="w-full px-3 py-2 border rounded"/>
+            <input id="petBreed" placeholder="Raza" value="\${breed}" class="w-full px-3 py-2 border rounded"/>
             <input id="petPhoto" type="file" accept="image/*" class="w-full"/>
             <div class="flex justify-end gap-2">
-              <button onclick="${isEdit?`updatePet('${id}')`:'addPet()'}" class="bg-animalium-green text-white px-4 py-2 rounded">Guardar</button>
+              <button onclick="\${isEdit?`updatePet('\${id}')`:'addPet()'}" class="bg-animalium-green text-white px-4 py-2 rounded">Guardar</button>
               <button onclick="closePetModal()" class="bg-gray-300 px-4 py-2 rounded">Cancelar</button>
             </div>
           </div>
-        </div>`);
+        </div>\`);
     }
     function closePetModal() { document.getElementById('petModal')?.remove(); }
 
     async function addPet() {
-      try {
-        const file = document.getElementById('petPhoto').files[0];
-        const photoData = file ? await fileToBase64(file) : '';
-        await db.collection('pets').add({ owner: auth.currentUser.uid, name: petName.value, breed: petBreed.value, photoData });
-        closePetModal(); loadPets(auth.currentUser.uid);
-      } catch(e) { console.error(e); alert(e.message); }
+      const file = document.getElementById('petPhoto').files[0];
+      const photoData = file ? await fileToBase64(file) : '';
+      await db.collection('pets').add({ owner: auth.currentUser.uid, name: petName.value, breed: petBreed.value, photoData });
+      closePetModal(); loadPets(auth.currentUser.uid);
     }
     async function updatePet(id) {
-      try {
-        const file = document.getElementById('petPhoto').files[0];
-        const photoData = file ? await fileToBase64(file) : undefined;
-        const data = { name: petName.value, breed: petBreed.value };
-        if(photoData) data.photoData = photoData;
-        await db.collection('pets').doc(id).update(data);
-        closePetModal(); loadPets(auth.currentUser.uid);
-      } catch(e){ console.error(e); alert(e.message); }
+      const file = document.getElementById('petPhoto').files[0];
+      const photoData = file ? await fileToBase64(file) : undefined;
+      const data = { name: petName.value, breed: petBreed.value };
+      if(photoData) data.photoData = photoData;
+      await db.collection('pets').doc(id).update(data);
+      closePetModal(); loadPets(auth.currentUser.uid);
     }
     async function deletePet(id) {
-      if(confirm('Eliminar mascota?')) {
+      if(confirm('¿Eliminar mascota?')) {
         await db.collection('pets').doc(id).delete();
         loadPets(auth.currentUser.uid);
       }
