@@ -1,34 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Animalium - Clínica Veterinaria 🐾</title>
-  <script src="https://cdn.tailwindcss.com">
-window.onload = () => { renderLogin(); };
-</script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
-window.onload = () => { renderLogin(); };
-</script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
-window.onload = () => { renderLogin(); };
-</script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js">
-window.onload = () => { renderLogin(); };
-</script>
-  <style>
-    .text-animalium-green { color: #5F7C7D; }
-    .bg-animalium-green { background-color: #5F7C7D; }
-    .bg-animalium-brown { background-color: #CDB79F; }
-    body { font-family: system-ui, sans-serif; margin: 0; }
-  </style>
-</head>
-<body class="bg-gray-100">
-  <div id="app-root" class="min-h-screen flex items-center justify-center px-4">
-    <p class="text-lg text-animalium-green">Cargando aplicación...</p>
-  </div>
-
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
@@ -51,37 +30,33 @@ window.onload = () => { renderLogin(); };
     });
 
     function renderLogin() {
-      document.getElementById("app-root").innerHTML = \`
-        <div class="min-h-screen w-full flex items-center justify-center px-4">
-          <div class="w-full max-w-sm bg-white p-6 rounded-lg shadow space-y-4 text-center">
-            <img src="logo-animalium.png" alt="Logo" class="h-20 mx-auto" />
-            <h1 class="text-xl font-bold text-animalium-green">Animalium - Iniciar Sesión</h1>
-            <input id="email" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded-md" />
-            <input id="password" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded-md" />
-            <div class="flex flex-col sm:flex-row gap-2">
-              <button onclick="loginWithEmail()" class="w-full bg-animalium-green text-white py-2 rounded-md">Entrar</button>
-              <button onclick="renderRegister()" class="w-full bg-animalium-brown text-white py-2 rounded-md">Registrarse</button>
-            </div>
+      document.getElementById("app-root").innerHTML = `
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+          <img src="logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <h1 class="text-3xl font-bold text-animalium-green mb-6">Animalium - Iniciar Sesión</h1>
+          <input id="email" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs" />
+          <input id="password" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs" />
+          <div class="flex gap-4 mb-4">
+            <button onclick="loginWithEmail()" class="px-4 py-2 bg-animalium-green text-white rounded">Entrar</button>
+            <button onclick="renderRegister()" class="px-4 py-2 bg-animalium-brown text-white rounded">Registrarse</button>
           </div>
-        </div>\`;
+        </div>`;
     }
 
     function renderRegister() {
-      document.getElementById("app-root").innerHTML = \`
-        <div class="min-h-screen w-full flex items-center justify-center px-4">
-          <div class="w-full max-w-sm bg-white p-6 rounded-lg shadow space-y-3 text-center">
-            <img src="logo-animalium.png" alt="Logo" class="h-20 mx-auto" />
-            <h1 class="text-xl font-bold text-animalium-green">Registro Animalium</h1>
-            <input id="name" type="text" placeholder="Nombre" class="w-full px-4 py-2 border rounded-md" />
-            <input id="surname" type="text" placeholder="Apellido" class="w-full px-4 py-2 border rounded-md" />
-            <input id="phone" type="text" placeholder="Teléfono" class="w-full px-4 py-2 border rounded-md" />
-            <input id="address" type="text" placeholder="Dirección" class="w-full px-4 py-2 border rounded-md" />
-            <input id="emailReg" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded-md" />
-            <input id="passwordReg" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded-md" />
-            <button onclick="registerWithSurvey()" class="w-full bg-animalium-green text-white py-2 rounded-md">Registrarse</button>
-            <p><a href="#" onclick="renderLogin()" class="text-animalium-green underline">Volver a Iniciar Sesión</a></p>
-          </div>
-        </div>\`;
+      document.getElementById("app-root").innerHTML = `
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+          <img src="logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
+          <h1 class="text-3xl font-bold text-animalium-green mb-6">Registro Animalium</h1>
+          <input id="name" type="text" placeholder="Nombre" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="surname" type="text" placeholder="Apellido" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="phone" type="text" placeholder="Teléfono" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="address" type="text" placeholder="Dirección" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="emailReg" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
+          <input id="passwordReg" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs"/>
+          <button onclick="registerWithSurvey()" class="px-4 py-2 bg-animalium-green text-white rounded mb-4">Registrarse</button>
+          <p><a href="#" onclick="renderLogin()" class="text-animalium-green underline">Volver a Iniciar Sesión</a></p>
+        </div>`;
     }
 
     async function loginWithEmail() {
@@ -110,9 +85,9 @@ window.onload = () => { renderLogin(); };
     }
 
     function renderDashboard(user) {
-      document.getElementById("app-root").innerHTML = \`
+      document.getElementById("app-root").innerHTML = `
         <header class="bg-white shadow p-4 text-center">
-          <h1 class="text-2xl font-bold text-animalium-green">Bienvenido, \${user.email}</h1>
+          <h1 class="text-3xl font-bold text-animalium-green">Bienvenido, ${user.email}</h1>
           <button onclick="logout()" class="mt-2 px-4 py-2 bg-red-500 text-white rounded">Cerrar sesión</button>
         </header>
         <main class="p-6 w-full max-w-lg mx-auto">
@@ -124,16 +99,18 @@ window.onload = () => { renderLogin(); };
           </div>
           <h3 class="text-lg font-semibold mb-3">Mis Citas</h3>
           <ul id="appointmentList" class="list-disc pl-5 mb-6"></ul>
-        </main>\`;
+        </main>`;
       setupAppointmentUI(user.uid);
     }
 
     function setupAppointmentUI(uid) {
       const dateInput = document.getElementById('appointmentDate');
       const timeSelect = document.getElementById('appointmentTime');
+
       dateInput.addEventListener('change', () => populateTimeSlots(dateInput.value));
       dateInput.value = new Date().toISOString().split('T')[0];
       populateTimeSlots(dateInput.value);
+
       db.collection('appointments').where('userId', '==', uid)
         .onSnapshot(snapshot => {
           const ul = document.getElementById('appointmentList');
@@ -155,9 +132,9 @@ window.onload = () => { renderLogin(); };
       const day = d.getDay();
       let slots = [];
       if (day >= 1 && day <= 5) {
-        for (let h = 9; h < 19; h++) slots.push(\`\${h}:00 - \${h+1}:00\`);
+        for (let h = 9; h < 19; h++) slots.push(`${h}:00 - ${h+1}:00`);
       } else if (day === 6) {
-        for (let h = 10; h < 14; h++) slots.push(\`\${h}:00 - \${h+1}:00\`);
+        for (let h = 10; h < 14; h++) slots.push(`${h}:00 - ${h+1}:00`);
       }
       slots.forEach(slot => {
         const opt = document.createElement('option');
@@ -175,8 +152,17 @@ window.onload = () => { renderLogin(); };
     function logout() {
       auth.signOut();
     }
-  
-window.onload = () => { renderLogin(); };
-</script>
+  </script>
+  <style>
+    .text-animalium-green { color: #5F7C7D; }
+    .bg-animalium-green { background-color: #5F7C7D; }
+    .bg-animalium-brown { background-color: #CDB79F; }
+    body { font-family: system-ui, sans-serif; margin: 0; }
+  </style>
+</head>
+<body>
+  <div id="app-root" class="min-h-screen flex items-center justify-center">
+    <p class="text-lg text-animalium-green">Cargando aplicación...</p>
+  </div>
 </body>
 </html>
