@@ -18,20 +18,18 @@
         </div>`;
     }
 
-        async function registerClient() {
+    async function registerClient() {
       try {
-        const name = document.getElementById('regName').value.trim();
-        const phone = document.getElementById('regPhone').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPass').value;
-        const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
-        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso.'); renderLogin();
-      } catch (err) { alert('Error: ' + err.message); }
-    }
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
     }
 
 </script>
@@ -49,20 +47,18 @@
         </div>`;
     }
 
-        async function registerClient() {
+    async function registerClient() {
       try {
-        const name = document.getElementById('regName').value.trim();
-        const phone = document.getElementById('regPhone').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPass').value;
-        const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
-        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso.'); renderLogin();
-      } catch (err) { alert('Error: ' + err.message); }
-    }
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
     }
 
 </script>
@@ -80,20 +76,18 @@
         </div>`;
     }
 
-        async function registerClient() {
+    async function registerClient() {
       try {
-        const name = document.getElementById('regName').value.trim();
-        const phone = document.getElementById('regPhone').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPass').value;
-        const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
-        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso.'); renderLogin();
-      } catch (err) { alert('Error: ' + err.message); }
-    }
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
     }
 
 </script>
@@ -111,20 +105,18 @@
         </div>`;
     }
 
-        async function registerClient() {
+    async function registerClient() {
       try {
-        const name = document.getElementById('regName').value.trim();
-        const phone = document.getElementById('regPhone').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPass').value;
-        const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
-        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso.'); renderLogin();
-      } catch (err) { alert('Error: ' + err.message); }
-    }
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
     }
 
 </script>
@@ -142,20 +134,18 @@
         </div>`;
     }
 
-        async function registerClient() {
+    async function registerClient() {
       try {
-        const name = document.getElementById('regName').value.trim();
-        const phone = document.getElementById('regPhone').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPass').value;
-        const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
-        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso.'); renderLogin();
-      } catch (err) { alert('Error: ' + err.message); }
-    }
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
     }
 
 </script>
@@ -180,7 +170,7 @@
       <h2 class="text-2xl font-semibold text-animalium-green mb-6">Iniciar Sesión</h2>
       <input id="email" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
       <input id="password" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
-      <button onclick="login()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Entrar</button>
+      <button onclick="loginWithEmail()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Entrar</button>
         <p class="mt-4"><a href="#" onclick="renderRegister()" class="text-animalium-green">Registrarse</a></p>
     </div>
   </main>
@@ -228,7 +218,7 @@
           <h2 class="text-2xl font-semibold text-animalium-green mb-6">Iniciar Sesión</h2>
           <input id="email" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
           <input id="password" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
-          <button onclick="login()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Entrar</button>
+          <button onclick="loginWithEmail()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Entrar</button>
         <p class="mt-4"><a href="#" onclick="renderRegister()" class="text-animalium-green">Registrarse</a></p>
         </div>`;
     }
@@ -373,20 +363,18 @@
         </div>`;
     }
 
-        async function registerClient() {
+    async function registerClient() {
       try {
-        const name = document.getElementById('regName').value.trim();
-        const phone = document.getElementById('regPhone').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPass').value;
-        const password2 = document.getElementById('regPass2').value;
-        if (!name || !phone || !email || !password) { alert('Completa todos los campos.'); return; }
-        if (password !== password2) { alert('Contraseñas no coinciden.'); return; }
         const result = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(result.user.uid).set({ name, phone, email });
-        alert('Registro exitoso.'); renderLogin();
-      } catch (err) { alert('Error: ' + err.message); }
-    }
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
     }
 
 </script>
