@@ -66,34 +66,27 @@
       messagingSenderId: "800956760641",
       appId: "1:800956760641:web:dab9057b718e240ec8bcc0"
     };
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
     const storage = firebase.storage();
 
-    // Auth state listener
     auth.onAuthStateChanged(user => {
       if (user) renderDashboard(user);
       else renderLogin();
     });
 
-    // Show login form
     function renderLogin() {
       document.getElementById('logoutBtn').classList.add('hidden');
       document.getElementById('app-root').innerHTML = `
         <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
           <h2 class="text-2xl font-semibold text-animalium-green mb-6">Iniciar Sesión</h2>
-          <input id="email" type="email" placeholder="Correo electrónico"
-                 class="w-full px-4 py-2 border rounded mb-4"/>
-          <input id="password" type="password" placeholder="Contraseña"
-                 class="w-full px-4 py-2 border rounded mb-4"/>
-          <button onclick="loginWithEmail()"
-                  class="w-full bg-animalium-green text-white px-6 py-2 rounded">Entrar</button>
+          <input id="email" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="password" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
+          <button onclick="loginWithEmail()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Entrar</button>
         </div>`;
     }
 
-    // Login function
     async function loginWithEmail() {
       try {
         const email = document.getElementById('email').value;
@@ -104,7 +97,6 @@
       }
     }
 
-    // Render dashboard with pets and appointments
     function renderDashboard(user) {
       document.getElementById('logoutBtn').classList.remove('hidden');
       document.getElementById('logoutBtn').onclick = () => auth.signOut();
@@ -122,25 +114,24 @@
       loadAppointments(user.uid);
     }
 
-    // Load pets from Firestore
     async function loadPets(uid) {
       const petList = document.getElementById('petList');
       petList.innerHTML = '';
-      const snapshot = await db.collection('pets').where('owner', '==', uid).get();
+      const snapshot = await db.collection('pets').where('owner','==',uid).get();
       snapshot.forEach(doc => {
-        const pet = doc.data();
+        const p = doc.data();
         petList.innerHTML += `
-          <div class="flex items-center gap-4">
-            ${pet.photoURL ? `<img src="${pet.photoURL}" class="h-16 w-16 rounded-full object-cover"/>` : ''}
-            <div>
-              <p class="font-semibold">${pet.name}</p>
-              <p>${pet.breed || ''}</p>
+          <div class="bg-white rounded-lg shadow p-4 flex items-center gap-4">
+            ${p.photoURL ? `<img src="${p.photoURL}" class="h-16 w-16 rounded-full object-cover"/>` : `<div class="h-16 w-16 bg-gray-200 rounded-full"></div>`}
+            <div class="text-left">
+              <p class="font-semibold text-lg">${p.name} (${p.age || '–'} años${p.sterilized ? ', esterilizado' : ''})</p>
+              <p class="text-sm text-gray-600">Raza: ${p.breed || '–'}</p>
+              ${p.vaccines && p.vaccines.length ? `<p class="text-sm text-gray-600">Vacunas: ${p.vaccines.join(', ')}</p>` : ''}
             </div>
           </div>`;
       });
     }
 
-    // Show modal to add a new pet
     function showAddPet() {
       document.body.insertAdjacentHTML('beforeend', `
         <div id="petModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -148,6 +139,9 @@
             <h3 class="text-lg font-semibold">Agregar Mascota</h3>
             <input id="petName" type="text" placeholder="Nombre" class="w-full px-4 py-2 border rounded"/>
             <input id="petBreed" type="text" placeholder="Raza" class="w-full px-4 py-2 border rounded"/>
+            <input id="petAge" type="number" placeholder="Edad (años)" class="w-full px-4 py-2 border rounded"/>
+            <label class="flex items-center gap-2"><input id="petSterilized" type="checkbox"/> Esterilizado(a)</label>
+            <input id="petVaccines" type="text" placeholder="Vacunas (separadas por comas)" class="w-full px-4 py-2 border rounded"/>
             <input id="petPhoto" type="file" accept="image/*" class="w-full"/>
             <div class="flex justify-end gap-2">
               <button onclick="addPet()" class="bg-animalium-green text-white px-4 py-2 rounded">Guardar</button>
@@ -162,10 +156,12 @@
       if(modal) modal.remove();
     }
 
-    // Add a pet to Firestore and Storage
     async function addPet() {
       const name = document.getElementById('petName').value;
       const breed = document.getElementById('petBreed').value;
+      const age = parseInt(document.getElementById('petAge').value) || null;
+      const sterilized = document.getElementById('petSterilized').checked;
+      const vaccines = document.getElementById('petVaccines').value.split(',').map(v=>v.trim()).filter(v=>v);
       const file = document.getElementById('petPhoto').files[0];
       const user = auth.currentUser;
       let photoURL = '';
@@ -174,12 +170,11 @@
         await ref.put(file);
         photoURL = await ref.getDownloadURL();
       }
-      await db.collection('pets').add({ owner: user.uid, name, breed, photoURL });
+      await db.collection('pets').add({ owner: user.uid, name, breed, age, sterilized, vaccines, photoURL });
       closePetModal();
       loadPets(user.uid);
     }
 
-    // Load appointments
     function loadAppointments(uid) {
       db.collection('appointments').where('userId','==',uid)
         .onSnapshot(snapshot => {
