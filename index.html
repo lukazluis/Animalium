@@ -4,18 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Animalium - Clínica Veterinaria 🐾</title>
-  <script src="https://cdn.tailwindcss.com">
-window.onload = () => { renderLogin(); };
-</script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
-window.onload = () => { renderLogin(); };
-</script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
-window.onload = () => { renderLogin(); };
-</script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js">
-window.onload = () => { renderLogin(); };
-</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <style>
+    .text-animalium-green { color: #5F7C7D; }
+    .bg-animalium-green { background-color: #5F7C7D; }
+    .bg-animalium-brown { background-color: #CDB79F; }
+    body { font-family: system-ui, sans-serif; margin: 0; background-color: #F7F7F7; }
+  </style>
+</head>
+<body>
+  <header class="bg-white shadow">
+    <div class="container mx-auto px-4 py-4 flex items-center gap-4">
+      <img src="logo-animalium.png" alt="Animalium Logo" class="h-10">
+      <h1 class="text-xl font-bold text-animalium-green">Animalium</h1>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6">
+      <h2 class="text-2xl font-semibold text-center text-animalium-green mb-6">Iniciar Sesión</h2>
+      <form id="login-form" class="space-y-4">
+        <input id="email" type="email" placeholder="Correo electrónico"
+               class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-animalium-green"/>
+        <input id="password" type="password" placeholder="Contraseña"
+               class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-animalium-green"/>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button type="button" onclick="loginWithEmail()"
+                  class="w-full sm:w-auto bg-animalium-green text-white px-6 py-2 rounded hover:opacity-90 transition">
+            Entrar
+          </button>
+          <button type="button" onclick="renderRegister()"
+                  class="w-full sm:w-auto bg-animalium-brown text-white px-6 py-2 rounded hover:opacity-90 transition">
+            Registrarse
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
@@ -29,156 +58,24 @@ window.onload = () => { renderLogin(); };
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(user => {
       if (user) {
         renderDashboard(user);
       } else {
-        renderLogin();
+        // show login form (static in HTML)
       }
     });
 
-    
-    function renderLogin() {
-      document.getElementById("app-root").innerHTML = `
-        <div class="min-h-screen w-full flex items-center justify-center px-4">
-          <div class="w-full max-w-sm bg-white p-6 rounded-lg shadow space-y-4 text-center">
-            <img src="logo-animalium.png" alt="Logo" class="h-20 mx-auto" />
-            <h1 class="text-xl font-bold text-animalium-green">Animalium - Iniciar Sesión</h1>
-            <input id="email" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-animalium-green" />
-            <input id="password" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-animalium-green" />
-            <div class="flex flex-col sm:flex-row gap-2">
-              <button onclick="loginWithEmail()" class="w-full bg-animalium-green text-white py-2 rounded-md">Entrar</button>
-              <button onclick="renderRegister()" class="w-full bg-animalium-brown text-white py-2 rounded-md">Registrarse</button>
-            </div>
-          </div>
-        </div>`;
-    }
-
-    
-    function renderRegister() {
-      document.getElementById("app-root").innerHTML = `
-        <div class="min-h-screen w-full flex items-center justify-center px-4">
-          <div class="w-full max-w-sm bg-white p-6 rounded-lg shadow space-y-3 text-center">
-            <img src="logo-animalium.png" alt="Logo" class="h-20 mx-auto" />
-            <h1 class="text-xl font-bold text-animalium-green">Registro Animalium</h1>
-            <input id="name" type="text" placeholder="Nombre" class="w-full px-4 py-2 border rounded-md" />
-            <input id="surname" type="text" placeholder="Apellido" class="w-full px-4 py-2 border rounded-md" />
-            <input id="phone" type="text" placeholder="Teléfono" class="w-full px-4 py-2 border rounded-md" />
-            <input id="address" type="text" placeholder="Dirección" class="w-full px-4 py-2 border rounded-md" />
-            <input id="emailReg" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded-md" />
-            <input id="passwordReg" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded-md" />
-            <button onclick="registerWithSurvey()" class="w-full bg-animalium-green text-white py-2 rounded-md">Registrarse</button>
-            <p><a href="#" onclick="renderLogin()" class="text-animalium-green underline">Volver a Iniciar Sesión</a></p>
-          </div>
-        </div>`;
-    }
-
-    async function loginWithEmail() {
+    function loginWithEmail() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      try {
-        await auth.signInWithEmailAndPassword(email, password);
-      } catch (err) {
-        alert('Error al iniciar sesión: ' + err.message);
-      }
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(err => alert('Error: ' + err.message));
     }
 
-    async function registerWithSurvey() {
-      const name = document.getElementById('name').value;
-      const surname = document.getElementById('surname').value;
-      const phone = document.getElementById('phone').value;
-      const address = document.getElementById('address').value;
-      const email = document.getElementById('emailReg').value;
-      const password = document.getElementById('passwordReg').value;
-      try {
-        const result = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(result.user.uid).set({ name, surname, phone, address, email });
-      } catch (err) {
-        alert('Error al registrarse: ' + err.message);
-      }
+    function renderRegister() {
+      window.location.href = '/register.html';
     }
-
-    function renderDashboard(user) {
-      document.getElementById("app-root").innerHTML = `
-        <header class="bg-white shadow p-4 text-center">
-          <h1 class="text-3xl font-bold text-animalium-green">Bienvenido, ${user.email}</h1>
-          <button onclick="logout()" class="mt-2 px-4 py-2 bg-red-500 text-white rounded">Cerrar sesión</button>
-        </header>
-        <main class="p-6 w-full max-w-lg mx-auto">
-          <h2 class="text-xl font-semibold mb-6">Agendar Cita 🗓️</h2>
-          <div class="flex flex-col gap-3 mb-6">
-            <input type="date" id="appointmentDate" class="px-4 py-2 border rounded w-full"/>
-            <select id="appointmentTime" class="px-4 py-2 border rounded w-full"></select>
-            <button onclick="bookAppointment()" class="px-4 py-2 bg-animalium-green text-white rounded">Reservar</button>
-          </div>
-          <h3 class="text-lg font-semibold mb-3">Mis Citas</h3>
-          <ul id="appointmentList" class="list-disc pl-5 mb-6"></ul>
-        </main>`;
-      setupAppointmentUI(user.uid);
-    }
-
-    function setupAppointmentUI(uid) {
-      const dateInput = document.getElementById('appointmentDate');
-      const timeSelect = document.getElementById('appointmentTime');
-
-      dateInput.addEventListener('change', () => populateTimeSlots(dateInput.value));
-      dateInput.value = new Date().toISOString().split('T')[0];
-      populateTimeSlots(dateInput.value);
-
-      db.collection('appointments').where('userId', '==', uid)
-        .onSnapshot(snapshot => {
-          const ul = document.getElementById('appointmentList');
-          ul.innerHTML = '';
-          snapshot.docs.forEach(doc => {
-            const data = doc.data();
-            const li = document.createElement('li');
-            li.textContent = data.date + ' ' + data.time;
-            ul.appendChild(li);
-          });
-        });
-    }
-
-    function populateTimeSlots(date) {
-      const timeSelect = document.getElementById('appointmentTime');
-      timeSelect.innerHTML = '';
-      if (!date) return;
-      const d = new Date(date);
-      const day = d.getDay();
-      let slots = [];
-      if (day >= 1 && day <= 5) {
-        for (let h = 9; h < 19; h++) slots.push(`${h}:00 - ${h+1}:00`);
-      } else if (day === 6) {
-        for (let h = 10; h < 14; h++) slots.push(`${h}:00 - ${h+1}:00`);
-      }
-      slots.forEach(slot => {
-        const opt = document.createElement('option');
-        opt.value = slot; opt.textContent = slot;
-        timeSelect.appendChild(opt);
-      });
-    }
-
-    function bookAppointment() {
-      const date = document.getElementById('appointmentDate').value;
-      const time = document.getElementById('appointmentTime').value;
-      db.collection('appointments').add({ userId: auth.currentUser.uid, date, time });
-    }
-
-    function logout() {
-      auth.signOut();
-    }
-  
-window.onload = () => { renderLogin(); };
-</script>
-  <style>
-    .text-animalium-green { color: #5F7C7D; }
-    .bg-animalium-green { background-color: #5F7C7D; }
-    .bg-animalium-brown { background-color: #CDB79F; }
-    body { font-family: system-ui, sans-serif; margin: 0; }
-  </style>
-</head>
-<body>
-  <div id="app-root" class="min-h-screen flex items-center justify-center">
-    <p class="text-lg text-animalium-green">Cargando aplicación...</p>
-  </div>
+  </script>
 </body>
 </html>
