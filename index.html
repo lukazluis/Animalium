@@ -5,10 +5,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Animalium - Clínica Veterinaria 🐾</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com">
+window.onload = () => { renderLogin(); };
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
+window.onload = () => { renderLogin(); };
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
+window.onload = () => { renderLogin(); };
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js">
+window.onload = () => { renderLogin(); };
+</script>
   <style>
     .text-animalium-green { color: #5F7C7D; }
     .bg-animalium-green { background-color: #5F7C7D; }
@@ -167,6 +175,8 @@
     function logout() {
       auth.signOut();
     }
-  </script>
+  
+window.onload = () => { renderLogin(); };
+</script>
 </body>
 </html>
