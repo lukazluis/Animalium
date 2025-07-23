@@ -2,13 +2,196 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Animalium - Clínica Veterinaria 🐾</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com">
+    function renderRegister() {
+      document.getElementById('logoutBtn').classList.add('hidden');
+      document.getElementById('app-root').innerHTML = `
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
+          <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
+          <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
+          <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
+        </div>`;
+    }
+
+    async function registerClient() {
+      try {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPass').value;
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
+    }
+
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
+    function renderRegister() {
+      document.getElementById('logoutBtn').classList.add('hidden');
+      document.getElementById('app-root').innerHTML = `
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
+          <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
+          <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
+          <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
+        </div>`;
+    }
+
+    async function registerClient() {
+      try {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPass').value;
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
+    }
+
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
+    function renderRegister() {
+      document.getElementById('logoutBtn').classList.add('hidden');
+      document.getElementById('app-root').innerHTML = `
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
+          <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
+          <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
+          <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
+        </div>`;
+    }
+
+    async function registerClient() {
+      try {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPass').value;
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
+    }
+
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js">
+    function renderRegister() {
+      document.getElementById('logoutBtn').classList.add('hidden');
+      document.getElementById('app-root').innerHTML = `
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
+          <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
+          <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
+          <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
+        </div>`;
+    }
+
+    async function registerClient() {
+      try {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPass').value;
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
+    }
+
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js">
+    function renderRegister() {
+      document.getElementById('logoutBtn').classList.add('hidden');
+      document.getElementById('app-root').innerHTML = `
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
+          <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
+          <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
+          <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
+        </div>`;
+    }
+
+    async function registerClient() {
+      try {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPass').value;
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
+      } catch (err) {
+        alert('Error al registrarse: ' + err.message);
+      }
+    }
+
+</script>
+  <style>
+    .text-animalium-green { color: #5F7C7D; }
+    .bg-animalium-green { background-color: #5F7C7D; }
+    .bg-animalium-brown { background-color: #CDB79F; }
+    body { font-family: system-ui, sans-serif; margin: 0; background-color: #F7F7F7; }
+  </style>
+</head>
+<body>
+  <header class="bg-white shadow fixed w-full z-10">
+    <div class="container mx-auto px-4 py-4 flex items-center gap-4">
+      <img src="logo-animalium.png" alt="Animalium Logo" class="h-10">
+      <h1 class="text-xl font-bold text-animalium-green">Animalium</h1>
+      <button id="logoutBtn" class="ml-auto bg-red-500 text-white px-4 py-2 rounded hidden">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="pt-20 container mx-auto px-4 py-8" id="app-root">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
+      <h2 class="text-2xl font-semibold text-animalium-green mb-6">Iniciar Sesión</h2>
+      <input id="email" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+      <input id="password" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
+      <button onclick="loginWithEmail()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Entrar</button>
+        <p class="mt-4"><a href="#" onclick="renderRegister()" class="text-animalium-green">Registrarse</a></p>
+    </div>
+  </main>
+
+  <footer class="bg-white py-6 mt-8">
+    <div class="container mx-auto px-4 text-center space-y-4">
+      <div class="flex items-center justify-center gap-2">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/whatsapp.svg" alt="WhatsApp" class="h-6 w-6"/>
+        <a href="https://wa.me/524423963079" class="text-animalium-green font-semibold">WhatsApp: 4423963079</a>
+      </div>
+      <div class="flex items-center justify-center gap-2">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/facebook.svg" alt="Facebook" class="h-6 w-6"/>
+        <a href="https://www.facebook.com/share/1CPHVWHDGF/" class="text-animalium-green font-semibold">Facebook</a>
+      </div>
+      <div class="flex items-center justify-center gap-2">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/googlemaps.svg" alt="Ubicación" class="h-6 w-6"/>
+        <a href="https://maps.app.goo.gl/cMW5JM8zJgMNNAzA9?g_st=ac" class="text-animalium-green font-semibold">Ubicación en Google Maps</a>
+      </div>
+    </div>
+  </footer>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAPLGpjyB5uiWolX28d31td4magMvYeZ4A",
@@ -21,149 +204,179 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+    const storage = firebase.storage();
 
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        renderDashboard(user);
-      } else {
-        renderLogin();
-      }
+    auth.onAuthStateChanged(user => {
+      if (user) renderDashboard(user);
+      else renderLogin();
     });
 
     function renderLogin() {
-      document.getElementById("app-root").innerHTML = `
-        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
-          <img src="logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
-          <h1 class="text-3xl font-bold text-animalium-green mb-6">Animalium - Iniciar Sesión</h1>
-          <input id="email" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs" />
-          <input id="password" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs" />
-          <div class="flex gap-4 mb-4">
-            <button onclick="loginWithEmail()" class="px-4 py-2 bg-animalium-green text-white rounded">Entrar</button>
-            <button onclick="renderRegister()" class="px-4 py-2 bg-animalium-brown text-white rounded">Registrarse</button>
-          </div>
-        </div>`;
-    }
-
-    function renderRegister() {
-      document.getElementById("app-root").innerHTML = `
-        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
-          <img src="logo-animalium.png" alt="Animalium Logo" class="h-24 mb-6">
-          <h1 class="text-3xl font-bold text-animalium-green mb-6">Registro Animalium</h1>
-          <input id="name" type="text" placeholder="Nombre" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
-          <input id="surname" type="text" placeholder="Apellido" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
-          <input id="phone" type="text" placeholder="Teléfono" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
-          <input id="address" type="text" placeholder="Dirección" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
-          <input id="emailReg" type="email" placeholder="Correo electrónico" class="mb-2 px-4 py-2 border rounded w-full max-w-xs"/>
-          <input id="passwordReg" type="password" placeholder="Contraseña" class="mb-4 px-4 py-2 border rounded w-full max-w-xs"/>
-          <button onclick="registerWithSurvey()" class="px-4 py-2 bg-animalium-green text-white rounded mb-4">Registrarse</button>
-          <p><a href="#" onclick="renderLogin()" class="text-animalium-green underline">Volver a Iniciar Sesión</a></p>
+      document.getElementById('logoutBtn').classList.add('hidden');
+      document.getElementById('app-root').innerHTML = `
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
+          <h2 class="text-2xl font-semibold text-animalium-green mb-6">Iniciar Sesión</h2>
+          <input id="email" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="password" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
+          <button onclick="loginWithEmail()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Entrar</button>
+        <p class="mt-4"><a href="#" onclick="renderRegister()" class="text-animalium-green">Registrarse</a></p>
         </div>`;
     }
 
     async function loginWithEmail() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
       try {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
         await auth.signInWithEmailAndPassword(email, password);
-      } catch (err) {
+      } catch(err) {
         alert('Error al iniciar sesión: ' + err.message);
       }
     }
 
-    async function registerWithSurvey() {
-      const name = document.getElementById('name').value;
-      const surname = document.getElementById('surname').value;
-      const phone = document.getElementById('phone').value;
-      const address = document.getElementById('address').value;
-      const email = document.getElementById('emailReg').value;
-      const password = document.getElementById('passwordReg').value;
+    function renderDashboard(user) {
+      document.getElementById('logoutBtn').classList.remove('hidden');
+      document.getElementById('logoutBtn').onclick = () => auth.signOut();
+      document.getElementById('app-root').innerHTML = `
+        <section class="max-w-xl mx-auto bg-white rounded-lg shadow p-6 mb-6">
+          <h2 class="text-xl font-semibold text-animalium-green mb-4">Tus Mascotas</h2>
+          <div id="petList" class="space-y-4"></div>
+          <button onclick="showAddPet()" class="mt-4 bg-animalium-brown text-white px-4 py-2 rounded">Agregar Mascota</button>
+        </section>
+        <section class="max-w-xl mx-auto bg-white rounded-lg shadow p-6">
+          <h2 class="text-xl font-semibold text-animalium-green mb-4">Tus Citas</h2>
+          <ul id="appointmentList" class="list-disc pl-5"></ul>
+        </section>`;
+      loadPets(user.uid);
+      loadAppointments(user.uid);
+    }
+
+    async function loadPets(uid) {
+      const petList = document.getElementById('petList');
+      petList.innerHTML = '';
+      const snapshot = await db.collection('pets').where('owner','==',uid).get();
+      snapshot.forEach(doc => {
+        const p = doc.data();
+        // compute next due date: add one year
+        const nextDates = p.vaccinesWithDates.map(v => {
+          const d = new Date(v.date);
+          d.setFullYear(d.getFullYear()+1);
+          return { name: v.name, last: v.date, next: d.toISOString().split('T')[0] };
+        });
+        petList.innerHTML += `
+          <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center gap-4">
+              ${p.photoURL ? `<img src="${p.photoURL}" class="h-16 w-16 rounded-full object-cover"/>` : `<div class="h-16 w-16 bg-gray-200 rounded-full"></div>`}
+              <div class="text-left">
+                <p class="font-semibold text-lg">${p.name} (${p.age || '–'} años${p.sterilized ? ', esterilizado' : ''})</p>
+                <p class="text-sm text-gray-600">Raza: ${p.breed || '–'}</p>
+                ${p.allergies ? `<p class="text-sm text-red-500">Alergias: ${p.allergies}</p>` : ''}
+              </div>
+            </div>
+            <div class="mt-4 text-sm">
+              <p class="font-semibold">Vacunas:</p>
+              ${nextDates.map(v=>`<p>${v.name}: última ${v.last}, próxima ${v.next}</p>`).join('')}
+            </div>
+          </div>`;
+      });
+    }
+
+    function showAddPet() {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div id="petModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div class="bg-white rounded-lg p-6 w-80 space-y-4 overflow-auto max-h-full">
+            <h3 class="text-lg font-semibold">Agregar Mascota</h3>
+            <input id="petName" type="text" placeholder="Nombre" class="w-full px-4 py-2 border rounded"/>
+            <input id="petBreed" type="text" placeholder="Raza" class="w-full px-4 py-2 border rounded"/>
+            <input id="petAge" type="number" placeholder="Edad (años)" class="w-full px-4 py-2 border rounded"/>
+            <label class="flex items-center gap-2"><input id="petSterilized" type="checkbox"/> Esterilizado(a)</label>
+            <p class="font-semibold text-left">Vacunas con fecha:</p>
+            <div class="space-y-2 text-left">
+              ${['Rabia','Parvovirus','Moquillo','Hepatitis','Leptospirosis'].map(name=>`
+                <div class="flex items-center gap-2">
+                  <input type="checkbox" class="petVaccine" value="${name}"/>
+                  <label>${name}</label>
+                  <input type="date" class="vetDate"/>
+                </div>
+              `).join('')}
+            </div>
+            <textarea id="petAllergies" placeholder="Alergias (opcional)" class="w-full px-4 py-2 border rounded"></textarea>
+            <input id="petPhoto" type="file" accept="image/*" class="w-full"/>
+            <div class="flex justify-end gap-2">
+              <button onclick="addPet()" class="bg-animalium-green text-white px-4 py-2 rounded">Guardar</button>
+              <button onclick="closePetModal()" class="bg-gray-300 px-4 py-2 rounded">Cancelar</button>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    function closePetModal() {
+      const modal = document.getElementById('petModal');
+      if(modal) modal.remove();
+    }
+
+    async function addPet() {
+      const name = document.getElementById('petName').value;
+      const breed = document.getElementById('petBreed').value;
+      const age = parseInt(document.getElementById('petAge').value) || null;
+      const sterilized = document.getElementById('petSterilized').checked;
+      const allergies = document.getElementById('petAllergies').value.trim();
+      const files = document.getElementById('petPhoto').files;
+      let photoURL = '';
+      if(files[0]) {
+        const ref = storage.ref().child(`pets/${auth.currentUser.uid}/${files[0].name}`);
+        await ref.put(files[0]);
+        photoURL = await ref.getDownloadURL();
+      }
+      // collect vaccines with dates
+      const vaccinesWithDates = Array.from(document.querySelectorAll('.petVaccine')).reduce((arr, cb, i) => {
+        const date = document.querySelectorAll('.vetDate')[i].value;
+        if(cb.checked && date) arr.push({ name: cb.value, date });
+        return arr;
+      }, []);
+      await db.collection('pets').add({ owner: auth.currentUser.uid, name, breed, age, sterilized, allergies, vaccinesWithDates, photoURL });
+      closePetModal();
+      loadPets(auth.currentUser.uid);
+    }
+
+    function loadAppointments(uid) {
+      db.collection('appointments').where('userId','==',uid)
+        .onSnapshot(snapshot => {
+          const list = document.getElementById('appointmentList');
+          list.innerHTML = '';
+          snapshot.forEach(doc => {
+            const a = doc.data();
+            list.innerHTML += `<li>${a.date} ${a.time}</li>`;
+          });
+        });
+    }
+  
+    function renderRegister() {
+      document.getElementById('logoutBtn').classList.add('hidden');
+      document.getElementById('app-root').innerHTML = `
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
+          <h2 class="text-2xl font-semibold text-animalium-green mb-6">Registro de Cliente</h2>
+          <input id="regName" type="text" placeholder="Nombre completo" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regEmail" type="email" placeholder="Correo electrónico" class="w-full px-4 py-2 border rounded mb-4"/>
+          <input id="regPass" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded mb-4"/>
+          <button onclick="registerClient()" class="w-full bg-animalium-green text-white px-6 py-2 rounded">Crear Cuenta</button>
+          <p class="mt-4"><a href="#" onclick="renderLogin()" class="text-animalium-green">Volver a Iniciar Sesión</a></p>
+        </div>`;
+    }
+
+    async function registerClient() {
       try {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPass').value;
         const result = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(result.user.uid).set({ name, surname, phone, address, email });
+        await db.collection('users').doc(result.user.uid).set({ name, email });
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        renderLogin();
       } catch (err) {
         alert('Error al registrarse: ' + err.message);
       }
     }
 
-    function renderDashboard(user) {
-      document.getElementById("app-root").innerHTML = `
-        <header class="bg-white shadow p-4 text-center">
-          <h1 class="text-3xl font-bold text-animalium-green">Bienvenido, ${user.email}</h1>
-          <button onclick="logout()" class="mt-2 px-4 py-2 bg-red-500 text-white rounded">Cerrar sesión</button>
-        </header>
-        <main class="p-6 w-full max-w-lg mx-auto">
-          <h2 class="text-xl font-semibold mb-6">Agendar Cita 🗓️</h2>
-          <div class="flex flex-col gap-3 mb-6">
-            <input type="date" id="appointmentDate" class="px-4 py-2 border rounded w-full"/>
-            <select id="appointmentTime" class="px-4 py-2 border rounded w-full"></select>
-            <button onclick="bookAppointment()" class="px-4 py-2 bg-animalium-green text-white rounded">Reservar</button>
-          </div>
-          <h3 class="text-lg font-semibold mb-3">Mis Citas</h3>
-          <ul id="appointmentList" class="list-disc pl-5 mb-6"></ul>
-        </main>`;
-      setupAppointmentUI(user.uid);
-    }
-
-    function setupAppointmentUI(uid) {
-      const dateInput = document.getElementById('appointmentDate');
-      const timeSelect = document.getElementById('appointmentTime');
-
-      dateInput.addEventListener('change', () => populateTimeSlots(dateInput.value));
-      dateInput.value = new Date().toISOString().split('T')[0];
-      populateTimeSlots(dateInput.value);
-
-      db.collection('appointments').where('userId', '==', uid)
-        .onSnapshot(snapshot => {
-          const ul = document.getElementById('appointmentList');
-          ul.innerHTML = '';
-          snapshot.docs.forEach(doc => {
-            const data = doc.data();
-            const li = document.createElement('li');
-            li.textContent = data.date + ' ' + data.time;
-            ul.appendChild(li);
-          });
-        });
-    }
-
-    function populateTimeSlots(date) {
-      const timeSelect = document.getElementById('appointmentTime');
-      timeSelect.innerHTML = '';
-      if (!date) return;
-      const d = new Date(date);
-      const day = d.getDay();
-      let slots = [];
-      if (day >= 1 && day <= 5) {
-        for (let h = 9; h < 19; h++) slots.push(`${h}:00 - ${h+1}:00`);
-      } else if (day === 6) {
-        for (let h = 10; h < 14; h++) slots.push(`${h}:00 - ${h+1}:00`);
-      }
-      slots.forEach(slot => {
-        const opt = document.createElement('option');
-        opt.value = slot; opt.textContent = slot;
-        timeSelect.appendChild(opt);
-      });
-    }
-
-    function bookAppointment() {
-      const date = document.getElementById('appointmentDate').value;
-      const time = document.getElementById('appointmentTime').value;
-      db.collection('appointments').add({ userId: auth.currentUser.uid, date, time });
-    }
-
-    function logout() {
-      auth.signOut();
-    }
-  </script>
-  <style>
-    .text-animalium-green { color: #5F7C7D; }
-    .bg-animalium-green { background-color: #5F7C7D; }
-    .bg-animalium-brown { background-color: #CDB79F; }
-    body { font-family: system-ui, sans-serif; margin: 0; }
-  </style>
-</head>
-<body>
-  <div id="app-root" class="min-h-screen flex items-center justify-center">
-    <p class="text-lg text-animalium-green">Cargando aplicación...</p>
-  </div>
+</script>
 </body>
 </html>
